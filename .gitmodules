@@ -1,0 +1,3 @@
+[submodule "SpriterNGUI"]
+	path = SpriterNGUI
+	url = git://github.com/Thinksquirrel-Software/spriterdapi-unity-ngui.git
