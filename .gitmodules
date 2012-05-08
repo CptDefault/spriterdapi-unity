@@ -1,3 +1,6 @@
 [submodule "Spriter-NGUI"]
 	path = Spriter-NGUI
 	url = https://github.com/Thinksquirrel-Software/spriterdapi-unity-ngui
+[submodule "Spriter-ex2D"]
+	path = Spriter-ex2D
+	url = https://github.com/Thinksquirrel-Software/spriterdapi-unity-ex2d

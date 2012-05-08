@@ -20,7 +20,7 @@ Current submodules:
 
 **[Spriter-NGUI](https://github.com/Thinksquirrel-Software/spriterdapi-unity-ngui)**
 
-**Spriter-ex2D** (coming soon)
+**[Spriter-ex2D](https://github.com/Thinksquirrel-Software/spriterdapi-unity-ex2d)** (coming soon)
 
 **Spriter-2D Toolkit** (coming soon)
 
