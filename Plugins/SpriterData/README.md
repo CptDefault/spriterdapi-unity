@@ -30,6 +30,12 @@ If you have any other suggestions for submodules, let me know or feel free to co
 
 Current SCML Version: **Beta file format**
 
+### Acknowledgments
+
+Special thanks to:
+
+* Mike and Edgar of BrashMonkey for support, as well as making both Spriter and the SCML format.
+
 ### License
 
 The Spriter Data API is licensed under the [MIT License](https://github.com/Thinksquirrel-Software/spriterdapi-unity/blob/master/Plugins/SpriterData/LICENSE.txt).
