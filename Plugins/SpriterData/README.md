@@ -24,6 +24,12 @@ Current submodules:
 
 **Spriter-2D Toolkit** (coming soon)
 
+If you have any other suggestions for submodules, let me know or feel free to contribute!
+
 ### SCML Version
 
 Current SCML Version: **Beta file format**
+
+### License
+
+The Spriter Data API is licensed under the [MIT License](https://github.com/Thinksquirrel-Software/spriterdapi-unity/blob/master/Plugins/SpriterData/LICENSE.txt).
