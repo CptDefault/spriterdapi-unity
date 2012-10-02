@@ -1,5 +1,3 @@
-// Spriter object model - ISpriterData
-// ISpriterData.cs
 // Spriter Data API - Unity
 //  
 // Authors:
@@ -30,51 +28,117 @@ using System.Collections.Generic;
 namespace BrashMonkey.Spriter.Data.ObjectModel
 {
 	/// <summary>
+	/// SCML Version information.
+	/// </summary>
+	public class VersionInfo
+	{
+		/// <summary>
+		/// The version of the SCML file.
+		/// </summary>
+		public string version
+		{
+			get;
+			private set;
+		}
+		
+		/// <summary>
+		/// The SCML generator used.
+		/// </summary>
+		public string generator
+		{
+			get;
+			private set;
+		}
+		
+		/// <summary>
+		/// The generator version used.
+		/// </summary>
+		public string generatorVersion
+		{
+			get;
+			private set;
+		}
+		
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BrashMonkey.Spriter.Data.ObjectModel.VersionInfo"/> class.
+		/// </summary>
+		/// <param name='version'>
+		/// Version string.
+		/// </param>
+		/// <param name='generator'>
+		/// Generator string.
+		/// </param>
+		/// <param name='generatorVersion'>
+		/// Generator version string.
+		/// </param>
+		public VersionInfo(string version, string generator, string generatorVersion)
+		{
+			Initialize(version, generator, generatorVersion);
+		}
+		
+		/// <summary>
+		/// Initializes all version information.
+		/// </summary>
+		public void Initialize(string version, string generator, string generatorVersion)
+		{
+			this.version = version;
+			this.generator = generator;
+			this.generatorVersion = generatorVersion;
+		}
+	}
+	
+	/// <summary>
 	/// This interface provides methods for importing and exporting Spriter data to various implementations.
 	/// </summary>
 	public interface ISpriterData
 	{
 		/// <summary>
-		/// The Spriter character to import/export.
+		/// SCML version information.
 		/// </summary>
-		/// <remarks>
-		/// There is only one character per SCML file.
-		/// </remarks>
-		ISpriterCharacter character
+		VersionInfo versionInfo
 		{
 			get;
-			set;
 		}
 		
 		/// <summary>
-		/// The list of render frames to import/export.
+		/// The list of files to import/export.
 		/// </summary>
 		/// <remarks>
-		/// The names of these frames are referenced by keyframes on each character animation.
+		/// These files are referenced by animations.
 		/// </remarks>
-		List<ISpriterFrame> frames
+		List<SpriterFile> files
 		{
 			get;
-			set;
 		}
 		
 		/// <summary>
-		/// Loads data from SCML.
+		/// The Spriter entity to import/export.
 		/// </summary>
-		void LoadSCML(string path);
-		/// <summary>
-		/// Saves data to SCML.
-		/// </summary>
-		void SaveSCML(string path);
+		/// <remarks>
+		/// There is only one entity per SCML file.
+		/// </remarks>
+		SpriterEntity entity
+		{
+			get;
+		}
 		
 		/// <summary>
-		/// Exports the data from the specific implementation.
+		/// Loads data from an SCML file.
 		/// </summary>
-		void ExportData();
+		void LoadData(string path);
+		/// <summary>
+		/// Saves data to an SCML file.
+		/// </summary>
+		void SaveData(string path);
 		
 		/// <summary>
-		/// Imports the data to the specific implementation.
+		/// Sends the data to the specific implementation.
 		/// </summary>
-		void ImportData();
+		void ToImplementation();
+		
+		/// <summary>
+		/// Saves data from the specific implementation
+		/// </summary>
+		void FromImplementation();
 	}
 }

@@ -1,5 +1,3 @@
-// SCML Parse methods
-// SCMLParse.cs
 // Spriter Data API - Unity
 //  
 // Authors:
@@ -34,19 +32,17 @@ using System.Xml;
 
 namespace BrashMonkey.Spriter.Data.IO
 {
-	public static class SCMLParse
+	internal static class SCMLParse
 	{	
 		/// <summary>
 		/// Loads spriter information from SCML.
 		/// </summary>
-		public static ISpriterData LoadSCML<TData, TCharacter, TAnimation, TFrame, TKeyframe, TSprite>(this ISpriterData data, string path)
-			where TData : ISpriterData
-			where TCharacter : ISpriterCharacter
-			where TAnimation : ISpriterAnimation
-			where TFrame : ISpriterFrame
-			where TKeyframe : ISpriterKeyframe
-			where TSprite : ISpriterSprite
+		internal static ISpriterData LoadSCML(ISpriterData data, string path)
 		{	
+			throw new System.NotImplementedException();
+		}
+
+		/*
 			if (data == null)
 				data = System.Activator.CreateInstance<TData>();
 				
@@ -55,8 +51,8 @@ namespace BrashMonkey.Spriter.Data.IO
 				reader.ReadToFollowing("char");
 				
 				// Create character
-				ISpriterCharacter character = System.Activator.CreateInstance<TCharacter>();
-				data.character = character;
+				ISpriterEntity character = System.Activator.CreateInstance<TCharacter>();
+				data.entity = character;
 				
 				// Character name
 				reader.ReadToDescendant("name");
@@ -128,7 +124,7 @@ namespace BrashMonkey.Spriter.Data.IO
 				
 				bool hasFrames = reader.ReadToFollowing("frame");
 				
-				data.frames = new List<ISpriterFrame>();
+				data.frames = new List<ISpriterFile>();
 				
 				if (!hasFrames)
 					return data;
@@ -136,7 +132,7 @@ namespace BrashMonkey.Spriter.Data.IO
 				do
 				{
 					// Create frame
-					ISpriterFrame frame = System.Activator.CreateInstance<TFrame>();
+					ISpriterFile frame = System.Activator.CreateInstance<TFrame>();
 					data.frames.Add(frame);
 					
 					// Frame name
@@ -209,11 +205,12 @@ namespace BrashMonkey.Spriter.Data.IO
 			
 			return data;
 		}
-	
+*/
+		
 		/// <summary>
 		/// Saves spriter information to SCML.
 		/// </summary>
-		public static ISpriterData SaveSCML<TData, TCharacter, TAnimation, TFrame, TKeyframe, TSprite>(this ISpriterData data, string path)
+		internal static ISpriterData SaveSCML(ISpriterData data, string path)
 		{
 			throw new System.NotImplementedException();
 		}
