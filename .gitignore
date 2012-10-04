@@ -1,7 +1,10 @@
-Spriter-NGUI.meta
+## Remove meta files from the repository and only hold code here. Examples will be in another repo.
+*.meta
+
+## NGUI-Specific files
 NGUI
-NGUI.meta
-Spriter-ex2D.meta
-_ex2D*
+
+## ex2D-Specific files
 ex2D.meta
+_ex2D*
 ex2D
