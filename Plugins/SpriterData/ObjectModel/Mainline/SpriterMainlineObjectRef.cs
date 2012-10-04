@@ -28,53 +28,31 @@ using System.Collections.Generic;
 namespace BrashMonkey.Spriter.Data.ObjectModel
 {
 	/// <summary>
-	/// Represents a persistent object timeline associated with an entity
+	/// Represents an object reference on the mainline.
 	/// </summary>
-	public class SpriterTimeline
+	public class SpriterMainlineObjectRef : SpriterMainlineObjectBase
 	{
 		/// <summary>
-		/// The timeline ID, unique to this timeline within this animation
+		/// The object ID, unique to this object reference within its key
 		/// </summary>
 		public int ID { get; internal set; }
 		
 		/// <summary>
-		/// The name of the entity.
+		/// The timeline object referenced
 		/// </summary>
-		public string name { get; internal set; }
+		public SpriterTimelineObject target { get; internal set; }
 		
 		/// <summary>
-		/// The object type.
+		/// Corresponds to the ID of the timeline referenced
 		/// </summary>
-		public ObjectType objectType { get; internal set; }
-		
+		public int timeline { get; internal set; }
 		/// <summary>
-		/// Valid values: "point", "box", "sprite", "sound", "entity", "variable"
+		/// Corresponds to the ID of the key within the timeline referenced
 		/// </summary>
-		public string objectTypeRaw { get; internal set; }
-		
+		public int key { get; internal set; }
 		/// <summary>
-		/// The type of variable (for tweened variables)
+		/// Order this object should be drawn
 		/// </summary>
-		public VariableType variableType { get; internal set; }
-		
-		/// <summary>
-		/// Valid values: "point", "box", "sprite", "sound", "entity", "variable"
-		/// </summary>
-		public string variableTypeRaw { get; internal set; }
-		
-		/// <summary>
-		/// The use case for the object
-		/// </summary>
-		public UsageType usageType { get; internal set; }
-		
-		/// <summary>
-		/// Valid values: "display", "collision", "both", "neither"
-		/// </summary>
-		public string usageTypeRaw { get; internal set; }
-		
-		/// <summary>
-		/// The list of timeline keys.
-		/// </summary>
-		public List<SpriterTimelineKey> keys { get; internal set; } 
+		public int zIndex { get; internal set; }
 	}
 }

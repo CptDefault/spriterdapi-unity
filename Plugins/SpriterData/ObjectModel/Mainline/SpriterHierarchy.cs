@@ -29,19 +29,52 @@ using UnityEngine;
 namespace BrashMonkey.Spriter.Data.ObjectModel
 {
 	/// <summary>
-	/// Represents an object on the mainline.
+	/// The mainline hierarchy. Contains bones and bone refs.
 	/// </summary>
-	public class SpriterMainlineObject : SpriterMainlineObjectBase
+	/// TODO: Comments
+	public sealed class SpriterHierarchy
+	{
+		public List<SpriterMainlineBoneBase> bones { get; internal set; }
+		
+		public SpriterHierarchy()
+		{
+			bones = new List<SpriterMainlineBoneBase>();
+		}
+	}
+	
+	public abstract class SpriterMainlineBoneBase
+	{
+		// Currently No data
+	}
+	
+	public sealed class SpriterMainlineBone
 	{
 		public int ID { get; internal set; }
-		public ObjectType objectType { get; internal set; }
-		public SpriterFile file { get; internal set; }
-		public int folderID { get; internal set; }
-		public int fileID { get; internal set; }
+		public int parent { get; internal set; }
 		public Vector2 position { get; internal set; }
-		public Vector2 pivot { get; internal set; }
 		public float angle { get; internal set; }
 		public Vector2 scale { get; internal set; }
-		public float alpha { get; internal set; }
+		public Color color { get; internal set; }
+		
+		/// <summary>
+		/// Mainline bone meta data
+		/// </summary>
+		public List<SpriterMetaData> metaData { get; internal set; }
+		
+		public SpriterMainlineBone()
+		{
+			metaData = new List<SpriterMetaData>();
+		}
+	}
+	
+	public sealed class SpriterMainlineBoneRef
+	{
+		public int ID { get; internal set; }
+		public int parent { get; internal set; }
+		
+		public SpriterTimelineBone target { get; internal set; }
+		
+		public int timeline { get; internal set; }
+		public int key { get; internal set; }
 	}
 }

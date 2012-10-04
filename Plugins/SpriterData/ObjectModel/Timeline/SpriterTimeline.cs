@@ -23,29 +23,69 @@
 //
 // Spriter is (c) by BrashMonkey.
 //
-using UnityEngine;
 using System.Collections.Generic;
 
 namespace BrashMonkey.Spriter.Data.ObjectModel
 {
 	/// <summary>
-	/// Represents a Spriter entity.
+	/// Represents a persistent object timeline associated with an entity
 	/// </summary>
-	public class SpriterEntity
+	public class SpriterTimeline
 	{
 		/// <summary>
-		/// ID unique to this entity, within the scml file
+		/// The timeline ID, unique to this timeline within this animation
 		/// </summary>
 		public int ID { get; internal set; }
 		
 		/// <summary>
-		/// Name unique to this entity, within the scml file
+		/// The name of the entity.
 		/// </summary>
 		public string name { get; internal set; }
 		
 		/// <summary>
-		/// The list of animations belonging to the entity
+		/// The object type.
 		/// </summary>
-		public List<SpriterAnimation> animations { get; internal set; }
+		public ObjectType objectType { get; internal set; }
+		
+		/// <summary>
+		/// Valid values: "point", "box", "sprite", "sound", "entity", "variable"
+		/// </summary>
+		public string objectTypeRaw { get; internal set; }
+		
+		/// <summary>
+		/// The type of variable (for tweened variables)
+		/// </summary>
+		public VariableType variableType { get; internal set; }
+		
+		/// <summary>
+		/// Valid values: "point", "box", "sprite", "sound", "entity", "variable"
+		/// </summary>
+		public string variableTypeRaw { get; internal set; }
+		
+		/// <summary>
+		/// The use case for the object
+		/// </summary>
+		public UsageType usage { get; internal set; }
+		
+		/// <summary>
+		/// Valid values: "display", "collision", "both", "neither"
+		/// </summary>
+		public string usageRaw { get; internal set; }
+		
+		/// <summary>
+		/// Timeline meta data
+		/// </summary>
+		public List<SpriterMetaData> metaData { get; internal set; }
+		
+		/// <summary>
+		/// The list of timeline keys.
+		/// </summary>
+		public List<SpriterTimelineKey> keys { get; internal set; } 
+		
+		public SpriterTimeline()
+		{
+			metaData = new List<SpriterMetaData>();
+			keys = new List<SpriterTimelineKey>();
+		}
 	}
 }

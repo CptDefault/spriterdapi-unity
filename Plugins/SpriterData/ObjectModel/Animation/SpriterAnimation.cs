@@ -30,7 +30,7 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	/// <summary>
 	/// Represents an animation of a Spriter character.
 	/// </summary>
-	public class SpriterAnimation
+	public sealed class SpriterAnimation
 	{
 		/// <summary>
 		/// The ID of the animation, unique to each animation within an entity
@@ -56,12 +56,17 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		/// <summary>
 		/// Raw animation playback type. Can be "true" (looping), "false" (not looping), "ping_pong" (loop back and forth). All other values are considered unknown
 		/// </summary>
-		public string rawPlaybackType { get; internal set; }
+		public string playbackTypeRaw { get; internal set; }
 		
 		/// <summary>
 		/// The ID of the key to loop back to.
 		/// </summary>
 		public int loopTo { get; internal set; }
+		
+		/// <summary>
+		/// Animation meta data.
+		/// </summary>
+		public List<SpriterMetaData> metaData { get; internal set; }
 		
 		/// <summary>
 		/// The main timeline for the animation.
@@ -72,5 +77,12 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		/// Additional timelines for persistent objects.
 		/// </summary>
 		public List<SpriterTimeline> timelines { get; internal set; }
+		
+		public SpriterAnimation()
+		{
+			metaData = new List<SpriterMetaData>();
+			mainline = new SpriterMainline();
+			timelines = new List<SpriterTimeline>();
+		}
 	}
 }

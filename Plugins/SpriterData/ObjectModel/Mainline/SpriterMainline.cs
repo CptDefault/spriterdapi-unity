@@ -28,29 +28,18 @@ using System.Collections.Generic;
 namespace BrashMonkey.Spriter.Data.ObjectModel
 {
 	/// <summary>
-	/// Represents a timeline key.
+	/// Represents an entity's mainline
 	/// </summary>
-	public class SpriterTimelineKey
+	public class SpriterMainline
 	{
 		/// <summary>
-		/// Unique to this key within this timeline
+		/// The list of mainline keys.
 		/// </summary>
-		public int ID { get; internal set; }
-		
-		// TODO: This would be much better as a double precision float value in seconds, rather than integer milliseconds
-		/// <summary>
-		/// The time of the keyframe, in miliseconds
-		/// </summary>
-		public int time { get; internal set; }
-		
-		/// <summary>
-		/// Valid values: - 1, -1
-		/// </summary>
-		public int spin { get; internal set; }
-		
-		/// <summary>
-		/// The list of keyframe objects.
-		/// </summary>
-		public List<SpriterTimelineObject> objects { get; internal set; } 
+		public List<SpriterMainlineKey> keys { get; internal set; } 
+	
+		public SpriterMainline()
+		{
+			keys = new List<SpriterMainlineKey>();
+		}
 	}
 }

@@ -28,14 +28,29 @@ using System.Collections.Generic;
 namespace BrashMonkey.Spriter.Data.ObjectModel
 {
 	/// <summary>
-	/// Represents an entity's mainline
+	/// Represents an atlas.
 	/// </summary>
-	public class SpriterMainline
+	/// TODO: Comments
+	public sealed class SpriterAtlas
 	{
+		public int ID { get; internal set; }
+		public string dataPath { get; internal set; }
+		public string imagePath { get; internal set; }
 		
-		/// <summary>
-		/// The list of mainline keys.
-		/// </summary>
-		public List<SpriterMainlineKey> keys { get; internal set; } 
+		public List<SpriterAtlasImage> images { get; internal set; }
+		
+		public SpriterAtlas()
+		{
+			images = new List<SpriterAtlasImage>();
+		}
+	}
+	
+	/// <summary>
+	/// Represents an atlas image.
+	/// </summary>
+	public sealed class SpriterAtlasImage
+	{
+		public int ID { get; internal set; }
+		public string fullPath { get; internal set; }
 	}
 }

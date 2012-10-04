@@ -1,5 +1,3 @@
-// Spriter enumerations
-// Enums.cs
 // Spriter Data API - Unity
 //  
 // Authors:
@@ -25,98 +23,41 @@
 //
 // Spriter is (c) by BrashMonkey.
 //
-namespace BrashMonkey.Spriter.Data
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace BrashMonkey.Spriter.Data.ObjectModel
 {
 	/// <summary>
-	/// File type
+	/// The character map. Contains map elements
 	/// </summary>
-	public enum FileType
+	/// TODO: Comments
+	public sealed class SpriterCharacterMap
 	{
-		Unknown = 0,
-		Image,
-		SoundEffect,
-		AtlasImage,
-		Entity
+		public int ID { get; internal set; }
+		public string name { get; internal set; }
+		
+		public List<SpriterMap> maps { get; internal set; }
+		
+		public SpriterCharacterMap()
+		{
+			maps = new List<SpriterMap>();
+		}
 	}
 	
-	/// <summary>
-	/// Playback type
-	/// </summary>
-	public enum PlaybackType
+	public sealed class SpriterMap
 	{
-		Unknown = 0,
-		PlayOnce,
-		Loop,
-		PingPong
-	}
-	
-	/// <summary>
-	/// Object type
-	/// </summary>
-	public enum ObjectType
-	{
-		Unknown = 0,
-		Point,
-		Box,
-		Sprite,
-		Sound,
-		Entity,
-		Variable
-	}
-	
-	/// <summary>
-	/// Variable type
-	/// </summary>
-	public enum VariableType
-	{
-		Unknown = 0,
-		String,
-		Int,
-		Float
-	}
-	
-	/// <summary>
-	/// Usage type
-	/// </summary>
-	public enum UsageType
-	{
-		Unknown = 0,
-		Display,
-		Collision,
-		Both,
-		Neither
-	}
-	
-	/// <summary>
-	/// Blend mode
-	/// </summary>
-	public enum BlendMode
-	{
-		Unknown = 0,
-		Alpha,
-		Additive,
-		Subtractive
-	}
-	
-	/// <summary>
-	/// Curve type
-	/// </summary>
-	public enum CurveType
-	{
-		Unknown = 0,
-		Linear,
-		Quadratic,
-		Cubic
-	}
-	
-	/// <summary>
-	/// Meta data type
-	///</summary>
-	public enum MetaDataType
-	{
-		Unknown = 0,
-		Variable,
-		Tag,
-		TweenedVariable
+		public SpriterAtlas sourceAtlas { get; internal set; }
+		public SpriterFile sourceFile { get; internal set; }
+		
+		public SpriterAtlas destinationAtlas { get; internal set; }
+		public SpriterFile destinationFile { get; internal set; }
+		
+		public int atlas { get; internal set; }
+		public int folder { get; internal set; }
+		public int file { get; internal set; }
+		public int targetAtlas { get; internal set; }
+		public int targetFolder { get; internal set; }
+		public int targetFile { get; internal set; }
 	}
 }

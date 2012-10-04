@@ -37,7 +37,7 @@ namespace BrashMonkey.Spriter.Data.IO
 		/// <summary>
 		/// Loads spriter information from SCML.
 		/// </summary>
-		internal static ISpriterData LoadSCML(ISpriterData data, string path)
+		internal static SpriterData LoadSCML(SpriterData data, string path)
 		{	
 			throw new System.NotImplementedException();
 		}
@@ -210,7 +210,7 @@ namespace BrashMonkey.Spriter.Data.IO
 		/// <summary>
 		/// Saves spriter information to SCML.
 		/// </summary>
-		internal static ISpriterData SaveSCML(ISpriterData data, string path)
+		internal static SpriterData SaveSCML(SpriterData data, string path)
 		{
 			throw new System.NotImplementedException();
 		}

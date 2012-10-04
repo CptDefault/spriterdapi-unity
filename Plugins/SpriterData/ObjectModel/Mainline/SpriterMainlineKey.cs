@@ -1,5 +1,3 @@
-// Spriter enumerations
-// Enums.cs
 // Spriter Data API - Unity
 //  
 // Authors:
@@ -25,98 +23,46 @@
 //
 // Spriter is (c) by BrashMonkey.
 //
-namespace BrashMonkey.Spriter.Data
+using System.Collections.Generic;
+
+namespace BrashMonkey.Spriter.Data.ObjectModel
 {
 	/// <summary>
-	/// File type
+	/// Represents a mainline key.
 	/// </summary>
-	public enum FileType
+	public class SpriterMainlineKey
 	{
-		Unknown = 0,
-		Image,
-		SoundEffect,
-		AtlasImage,
-		Entity
-	}
+		/// <summary>
+		/// Unique to this key within the mainline
+		/// </summary>
+		public int ID { get; internal set; }
+		
+		// TODO: This would be much better as a double precision float value in seconds, rather than integer milliseconds
+		/// <summary>
+		/// The time of the keyframe, in miliseconds
+		/// </summary>
+		public int time { get; internal set; }
+		
+		/// <summary>
+		/// Mainline key meta data.
+		/// </summary>
+		public List<SpriterMetaData> metaData { get; internal set; }
+		
+		/// <summary>
+		/// Hierarchy information for the mainline key.
+		/// </summary>
+		public SpriterHierarchy hierarchy { get; internal set; }
+		
+		/// <summary>
+		/// The list of keyframe objects.
+		/// </summary>
+		public List<SpriterMainlineObjectBase> objects { get; internal set; } 
 	
-	/// <summary>
-	/// Playback type
-	/// </summary>
-	public enum PlaybackType
-	{
-		Unknown = 0,
-		PlayOnce,
-		Loop,
-		PingPong
-	}
-	
-	/// <summary>
-	/// Object type
-	/// </summary>
-	public enum ObjectType
-	{
-		Unknown = 0,
-		Point,
-		Box,
-		Sprite,
-		Sound,
-		Entity,
-		Variable
-	}
-	
-	/// <summary>
-	/// Variable type
-	/// </summary>
-	public enum VariableType
-	{
-		Unknown = 0,
-		String,
-		Int,
-		Float
-	}
-	
-	/// <summary>
-	/// Usage type
-	/// </summary>
-	public enum UsageType
-	{
-		Unknown = 0,
-		Display,
-		Collision,
-		Both,
-		Neither
-	}
-	
-	/// <summary>
-	/// Blend mode
-	/// </summary>
-	public enum BlendMode
-	{
-		Unknown = 0,
-		Alpha,
-		Additive,
-		Subtractive
-	}
-	
-	/// <summary>
-	/// Curve type
-	/// </summary>
-	public enum CurveType
-	{
-		Unknown = 0,
-		Linear,
-		Quadratic,
-		Cubic
-	}
-	
-	/// <summary>
-	/// Meta data type
-	///</summary>
-	public enum MetaDataType
-	{
-		Unknown = 0,
-		Variable,
-		Tag,
-		TweenedVariable
+		public SpriterMainlineKey()
+		{
+			metaData = new List<SpriterMetaData>();
+			hierarchy = new SpriterHierarchy();
+			objects = new List<SpriterMainlineObjectBase>();
+		}
 	}
 }

@@ -24,16 +24,18 @@
 // Spriter is (c) by BrashMonkey.
 //
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace BrashMonkey.Spriter.Data.ObjectModel
 {
 	/// <summary>
-	/// Represents a mainline key.
+	/// Represents a timeline key.
 	/// </summary>
-	public class SpriterMainlineKey
+	/// TODO: Comments
+	public class SpriterTimelineKey
 	{
 		/// <summary>
-		/// Unique to this key within the mainline
+		/// Unique to this key within this timeline
 		/// </summary>
 		public int ID { get; internal set; }
 		
@@ -43,9 +45,29 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		/// </summary>
 		public int time { get; internal set; }
 		
+		public CurveType curveType { get; internal set; }
+		public string curveTypeRaw { get; internal set; }
+		public Vector2 curveTangents { get; internal set; }
+		
+		/// <summary>
+		/// Valid values: - 1, -1
+		/// </summary>
+		public int spin { get; internal set; }
+		
+		/// <summary>
+		/// Timeline key meta data
+		/// </summary>
+		public List<SpriterMetaData> metaData { get; internal set; }
+		
 		/// <summary>
 		/// The list of keyframe objects.
 		/// </summary>
-		public List<SpriterMainlineObjectBase> objects { get; internal set; } 
+		public List<SpriterTimelineObject> objects { get; internal set; }
+		
+		public SpriterTimelineKey()
+		{
+			metaData = new List<SpriterMetaData>();
+			objects = new List<SpriterTimelineObject>();
+		}
 	}
 }

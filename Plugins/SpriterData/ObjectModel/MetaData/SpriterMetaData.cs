@@ -29,38 +29,71 @@ using UnityEngine;
 namespace BrashMonkey.Spriter.Data.ObjectModel
 {
 	/// <summary>
-	/// Represents a file.
+	/// Meta data base class.
 	/// </summary>
-	public class SpriterFile
+	/// TODO: Comments
+	public abstract class SpriterMetaData
 	{
 		/// <summary>
-		/// The type of file.
+		/// The type of meta data.
 		/// </summary>
-		public FileType type { get; internal set; }
+		public abstract MetaDataType metaDataType { get; }
+	}
+	
+	public sealed class SpriterVariableMetaData : SpriterMetaData
+	{
+		#region implemented abstract members of BrashMonkey.Spriter.Data.ObjectModel.SpriterMetaData
+		public override MetaDataType metaDataType
+		{
+			get
+			{
+				return MetaDataType.Variable;
+			}
+		}
+		#endregion
 		
-		/// <summary>
-		/// The raw type of file. Supported values are "image", "sound_effect", "atlas_image", or "entity" (.scml file). Any other value is accepted, but will be registered as "Unknown"
-		/// </summary>
-		public string typeName { get; internal set; }
-		
-		/// <summary>
-		/// Integer unique to this file, within its folder
-		/// </summary>
-		public int ID { get; internal set; }
-		
-		/// <summary>
-		/// Integer unique to this file's folder
-		/// </summary>
-		public int folderID { get; internal set; }
-		
-		/// <summary>
-		/// Name unique to this file, within its folder
-		/// </summary>
 		public string name { get; internal set; }
 		
-		/// <summary>
-		/// The default pivot, in UV space. (0, 0) = bottom left, (1, 1) = top right
-		/// </summary>
-		public Vector2 pivot { get; internal set; }
+		public VariableType variableType { get; internal set; }
+		
+		public object value { get; internal set; }
+	}
+	
+	public sealed class SpriterTweenedVariableMetaData : SpriterMetaData
+	{
+		#region implemented abstract members of BrashMonkey.Spriter.Data.ObjectModel.SpriterMetaData
+		public override MetaDataType metaDataType
+		{
+			get
+			{
+				return MetaDataType.TweenedVariable;
+			}
+		}
+		#endregion
+		
+		public string name { get; internal set; }
+		
+		public VariableType variableType { get; internal set; }
+		
+		public object value { get; internal set; }
+		
+		public CurveType curveType { get; internal set; }
+		public string curveTypeRaw { get; internal set; }
+		public Vector2 curveTangents { get; internal set; }
+	}
+	
+	public sealed class SpriterTagMetaData : SpriterMetaData
+	{
+		#region implemented abstract members of BrashMonkey.Spriter.Data.ObjectModel.SpriterMetaData
+		public override MetaDataType metaDataType
+		{
+			get
+			{
+				return MetaDataType.Tag;
+			}
+		}
+		#endregion
+		
+		public string name { get; internal set; }
 	}
 }

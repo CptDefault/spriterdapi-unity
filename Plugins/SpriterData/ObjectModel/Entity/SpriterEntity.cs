@@ -23,36 +23,40 @@
 //
 // Spriter is (c) by BrashMonkey.
 //
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace BrashMonkey.Spriter.Data.ObjectModel
 {
 	/// <summary>
-	/// Represents an object reference on the mainline.
+	/// Represents a Spriter entity.
 	/// </summary>
-	public class SpriterMainlineObjectRef : SpriterMainlineObjectBase
+	public sealed class SpriterEntity
 	{
 		/// <summary>
-		/// The object ID, unique to this object reference within its key
+		/// ID unique to this entity, within the scml file
 		/// </summary>
 		public int ID { get; internal set; }
 		
 		/// <summary>
-		/// The timeline object referenced
+		/// Name unique to this entity, within the scml file
 		/// </summary>
-		public SpriterTimelineObject target { get; internal set; }
+		public string name { get; internal set; }
 		
 		/// <summary>
-		/// Corresponds to the ID of the timeline referenced
+		/// Entity meta data.
 		/// </summary>
-		public int timelineID { get; internal set; }
+		public List<SpriterMetaData> metaData { get; internal set; }
+		
 		/// <summary>
-		/// Corresponds to the ID of the key within the timeline referenced
+		/// The list of animations belonging to the entity
 		/// </summary>
-		public int keyID { get; internal set; }
-		/// <summary>
-		/// Order this object should be drawn
-		/// </summary>
-		public int zIndex { get; internal set; }
+		public List<SpriterAnimation> animations { get; internal set; }
+		
+		public SpriterEntity()
+		{
+			metaData = new List<SpriterMetaData>();
+			animations = new List<SpriterAnimation>();
+		}
 	}
 }
