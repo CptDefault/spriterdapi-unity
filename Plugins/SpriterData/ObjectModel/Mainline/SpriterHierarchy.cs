@@ -47,7 +47,7 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		// Currently No data
 	}
 	
-	public sealed class SpriterMainlineBone
+	public sealed class SpriterMainlineBone : SpriterMainlineBoneBase
 	{
 		public int ID { get; internal set; }
 		public int parent { get; internal set; }
@@ -67,7 +67,7 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		}
 	}
 	
-	public sealed class SpriterMainlineBoneRef
+	public sealed class SpriterMainlineBoneRef : SpriterMainlineBoneBase
 	{
 		public int ID { get; internal set; }
 		public int parent { get; internal set; }
