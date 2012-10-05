@@ -30,12 +30,15 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	/// <summary>
 	/// Represents an object reference on the mainline.
 	/// </summary>
+	/// TODO: Comments
 	public sealed class SpriterMainlineObjectRef : SpriterMainlineObjectBase
 	{
 		/// <summary>
 		/// The object ID, unique to this object reference within its key
 		/// </summary>
 		public int ID { get; internal set; }
+		
+		public int parent { get; internal set; }
 		
 		/// <summary>
 		/// The timeline object referenced
