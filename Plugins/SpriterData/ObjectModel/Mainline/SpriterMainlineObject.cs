@@ -31,7 +31,8 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	/// <summary>
 	/// Represents an object on the mainline.
 	/// </summary>
-	public class SpriterMainlineObject : SpriterMainlineObjectBase
+	/// /// TODO: Entitiy animation uses a int here instead of an string? Inconsistency
+	public sealed class SpriterMainlineObject : SpriterMainlineObjectBase
 	{
 		public int ID { get; internal set; }
 		public int parent { get; internal set; }

@@ -56,6 +56,8 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		
 		public VariableType variableType { get; internal set; }
 		
+		public string variableTypeRaw { get; internal set; }
+		
 		public object value { get; internal set; }
 	}
 	
@@ -74,6 +76,8 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		public string name { get; internal set; }
 		
 		public VariableType variableType { get; internal set; }
+		
+		public string variableTypeRaw { get; internal set; }
 		
 		public object value { get; internal set; }
 		

@@ -30,7 +30,7 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	/// <summary>
 	/// Represents an entity's mainline
 	/// </summary>
-	public class SpriterMainline
+	public sealed class SpriterMainline
 	{
 		/// <summary>
 		/// The list of mainline keys.

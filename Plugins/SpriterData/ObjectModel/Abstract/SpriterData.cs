@@ -36,39 +36,27 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		/// <summary>
 		/// The version of the SCML file.
 		/// </summary>
-		public string version { get; private set; }
+		public string version { get; internal set; }
 		
 		/// <summary>
 		/// The SCML generator used.
 		/// </summary>
-		public string generator { get; private set; }
+		public string generator { get; internal set; }
 		
 		/// <summary>
 		/// The generator version used.
 		/// </summary>
-		public string generatorVersion { get; private set; }
+		public string generatorVersion { get; internal set; }
 		
 		/// <summary>
 		/// If pixel art mode is enabled, renderers should use point filtering on textures.
 		/// </summary>
-		public bool pixelArtMode { get; private set; }
+		public bool pixelArtMode { get; internal set; }
 		
 		/// <summary>
 		/// Valid values: "true", "false"
 		/// </summary>
-		public string pixelArtModeRaw { get; private set; }
-		
-		/// <summary>
-		/// Initializes all version information.
-		/// </summary>
-		public void Initialize(string version, string generator, string generatorVersion, bool pixelArtMode, string pixelArtModeRaw)
-		{
-			this.version = version;
-			this.generator = generator;
-			this.generatorVersion = generatorVersion;
-			this.pixelArtMode = pixelArtMode;
-			this.pixelArtModeRaw = pixelArtModeRaw;
-		}
+		public string pixelArtModeRaw { get; internal set; }
 	}
 	
 	public sealed class DocumentInformation
@@ -103,20 +91,6 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		/// Custom notes.
 		/// </summary>
 		public string notes { get; internal set; }
-	
-		/// <summary>
-		/// Initializes all document information.
-		/// </summary>
-		public void Initialize(string author, string copyright, string license, string version,
-			string lastModified, string notes)
-		{
-			this.author = author;
-			this.copyright = copyright;
-			this.license = license;
-			this.version = version;
-			this.lastModified = lastModified;
-			this.notes = notes;
-		}
 	}
 	
 	/// <summary>
@@ -165,6 +139,9 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		/// </summary>
 		public DocumentInformation documentInfo { get; internal set; }
 		
+#if UNITY_EDITOR || SCML_RUNTIME
+		SCMLParser m_Parser;
+#endif	
 		public SpriterData()
 		{
 			versionInfo = new VersionInformation();
@@ -174,6 +151,11 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 			entity = new SpriterEntity();
 			characterMap = new SpriterCharacterMap();
 			documentInfo = new DocumentInformation();
+
+#if UNITY_EDITOR || SCML_RUNTIME			
+			m_Parser = new SCMLParser(this);
+#endif		
+			Reset();
 		}
 		
 		/// <summary>
@@ -181,7 +163,9 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		/// </summary>
 		public void LoadData(string path)
 		{
-			SCMLParse.LoadSCML(this, path);
+#if UNITY_EDITOR || SCML_RUNTIME			
+			m_Parser.LoadSCML(path);
+#endif
 			ToImplementation();
 		}
 		/// <summary>
@@ -189,8 +173,41 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		/// </summary>
 		public void SaveData(string path)
 		{
-			SCMLParse.SaveSCML(this, path);
 			FromImplementation();
+#if UNITY_EDITOR || SCML_RUNTIME
+			m_Parser.SaveSCML(path);
+#endif
+		}
+		
+		public void Reset()
+		{
+			this.atlases.Clear();
+			
+			this.characterMap.ID = 0;
+			this.characterMap.maps.Clear();
+			this.characterMap.name = "";
+			
+			this.documentInfo.author = "author not specified";
+			this.documentInfo.copyright = "copyright info not specified";
+			this.documentInfo.lastModified = "date and time not included";
+			this.documentInfo.license = "no license specified";
+			this.documentInfo.notes = "no additional notes";
+			this.documentInfo.version = "version not specified";
+			
+			this.entity.animations.Clear();
+			this.entity.ID = 0;
+			this.entity.metaData.Clear();
+			this.entity.name = "";
+			
+			this.files.Clear();
+			
+			this.metaData.Clear();
+			
+			this.versionInfo.generator = "SpriterDAPI-Unity";
+			this.versionInfo.generatorVersion = "1.0";
+			this.versionInfo.pixelArtMode = false;
+			this.versionInfo.pixelArtModeRaw = "false";
+			this.versionInfo.version = "";
 		}
 		
 		/// <summary>

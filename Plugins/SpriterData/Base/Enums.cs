@@ -27,6 +27,8 @@
 //
 namespace BrashMonkey.Spriter.Data
 {
+	// TODO: Use native scml names to make enum parsing easier
+	
 	/// <summary>
 	/// File type
 	/// </summary>
@@ -104,6 +106,7 @@ namespace BrashMonkey.Spriter.Data
 	public enum CurveType
 	{
 		Unknown = 0,
+		Instant,
 		Linear,
 		Quadratic,
 		Cubic

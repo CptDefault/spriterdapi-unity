@@ -30,7 +30,7 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	/// <summary>
 	/// Represents an object reference on the mainline.
 	/// </summary>
-	public class SpriterMainlineObjectRef : SpriterMainlineObjectBase
+	public sealed class SpriterMainlineObjectRef : SpriterMainlineObjectBase
 	{
 		/// <summary>
 		/// The object ID, unique to this object reference within its key

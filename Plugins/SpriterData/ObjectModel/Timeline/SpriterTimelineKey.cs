@@ -32,7 +32,7 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	/// Represents a timeline key.
 	/// </summary>
 	/// TODO: Comments
-	public class SpriterTimelineKey
+	public sealed class SpriterTimelineKey
 	{
 		/// <summary>
 		/// Unique to this key within this timeline

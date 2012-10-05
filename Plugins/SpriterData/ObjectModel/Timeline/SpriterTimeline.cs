@@ -30,7 +30,7 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	/// <summary>
 	/// Represents a persistent object timeline associated with an entity
 	/// </summary>
-	public class SpriterTimeline
+	public sealed class SpriterTimeline
 	{
 		/// <summary>
 		/// The timeline ID, unique to this timeline within this animation

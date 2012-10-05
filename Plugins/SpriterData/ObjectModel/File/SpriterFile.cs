@@ -54,6 +54,11 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		public int folderID { get; internal set; }
 		
 		/// <summary>
+		/// Folder name
+		/// </summary>
+		public string folderName { get; internal set; }
+		
+		/// <summary>
 		/// Name unique to this file, within its folder
 		/// </summary>
 		public string name { get; internal set; }

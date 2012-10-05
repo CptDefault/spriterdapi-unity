@@ -33,7 +33,7 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	/// </summary>
 	/// TODO: Comments
 	/// TODO: Entitiy animation uses a string here instead of an int? Inconsistency
-	public class SpriterTimelineObject
+	public sealed class SpriterTimelineObject
 	{
 		public SpriterAtlas targetAtlas { get; internal set; }
 		public SpriterFile targetFile { get; internal set; }
