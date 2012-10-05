@@ -8,11 +8,19 @@ For more information about Spriter, please visit <http://brashmonkey.com/spriter
 
 This version of the API is written for the Unity game engine (<http://unity3d.com>).
 
-This repository also includes a demo SCML character, and submodules for specific Unity implementations of the Data API.
+This repository also includes submodules for specific Unity implementations of the Data API. A default implementation is included.
 
 ### Installation
 
 Place the contents of this repository in the Assets folder of your Unity project.
+
+### Usage
+
+Coming soon - instructions for the default implementation
+
+### Compiler flags
+
+**SCML_RUNTIME**: Allows SCML import/export at runtime. This will add the System.Xml .dll to your project if it has not already been included.
 
 ### Submodules
 
@@ -28,7 +36,7 @@ If you have any other suggestions for submodules, let me know or feel free to co
 
 ### SCML Version
 
-Current SCML Version: **Beta file format**
+Current SCML Version: **Final candidate format**
 
 ### Acknowledgments
 
