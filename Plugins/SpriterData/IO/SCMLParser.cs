@@ -77,7 +77,7 @@ namespace BrashMonkey.Spriter.Data.IO
 						
 						// Atlases
 						else if (child.Name.Equals("atlas"))
-							ReadAtlases(child);
+							ReadAtlas(child);
 						
 						// Entity
 						else if (child.Name.Equals("entity"))
@@ -123,7 +123,7 @@ namespace BrashMonkey.Spriter.Data.IO
 			}
 		}
 		
-		// TODO: Make this similar to the other read methods
+		// TODO: Enum comparison needs changing here
 		void ReadMetaData(XmlElement element, List<SpriterMetaData> metaDataList)
 		{
 			foreach(XmlElement child in element)
@@ -292,18 +292,557 @@ namespace BrashMonkey.Spriter.Data.IO
 			}
 		}
 		
-		// TODO
-		void ReadAtlases(XmlElement element)
+		void ReadAtlas(XmlElement element)
+		{
+			SpriterAtlas atlas = new SpriterAtlas();
+			m_Data.atlases.Add(atlas);
+			int folderID = 0;
+			string folderName = string.Empty;
+			
+			foreach(XmlAttribute attribute in element.Attributes)
+			{	
+				// id
+				if (attribute.Name.Equals("id"))
+					atlas.ID = int.Parse(attribute.Value);
+				
+				// data_path
+				else if (attribute.Name.Equals("data_path"))
+					atlas.dataPath = attribute.Value;
+			
+				// image_path
+				else if (attribute.Name.Equals("image_path"))
+					atlas.imagePath = attribute.Value;
+			}
+			
+			foreach(XmlElement child in element)
+			{	
+				if (child.Name.Equals("folder"))
+				{
+					foreach(XmlAttribute attribute in child.Attributes)
+					{
+						// folder id
+						if (attribute.Name.Equals("id"))
+							folderID = int.Parse(attribute.Value);
+						
+						// folder name
+						else if (attribute.Name.Equals("name"))
+							folderName = attribute.Value;
+					}
+					
+					foreach(XmlElement child2 in child)
+					{
+						SpriterAtlasImage image = new SpriterAtlasImage();
+						atlas.images.Add(image);
+						
+						foreach(XmlAttribute attribute in child2.Attributes)
+						{
+							// image id
+							if (attribute.Name.Equals("id"))
+								image.ID = int.Parse(attribute.Value);
+							
+							// image full_path
+							else if (attribute.Name.Equals("full_path"))
+								image.fullPath = attribute.Value;
+						}
+						
+						// other properties
+						image.folderID = folderID;
+						image.folderName = folderName;
+					}
+				}
+			}
+		}
+		
+		void ReadEntity(XmlElement element)
+		{
+			foreach(XmlAttribute attribute in element.Attributes)
+			{
+				// id
+				if (attribute.Name.Equals("id"))
+					m_Data.entity.ID = int.Parse(attribute.Value);
+				
+				// name
+				else if (attribute.Name.Equals("name"))
+					m_Data.entity.name = attribute.Value;
+			}
+			
+			foreach(XmlElement child in element)
+			{
+				// meta_data
+				if (child.Name.Equals("meta_data"))
+					ReadMetaData(child, m_Data.entity.metaData);
+				
+				// animation
+				else if (child.Name.Equals("animation"))
+				{
+					SpriterAnimation animation = new SpriterAnimation();
+					m_Data.entity.animations.Add(animation);
+					
+					foreach(XmlAttribute attribute in child.Attributes)
+					{
+						// id
+						if (attribute.Name.Equals("id"))
+							animation.ID = int.Parse(attribute.Value);
+						
+						// name
+						else if (attribute.Name.Equals("name"))
+							animation.name = attribute.Value;
+					
+						// length
+						else if (attribute.Name.Equals("length"))
+							animation.length = int.Parse(attribute.Value);
+						
+						// looping
+						else if (attribute.Name.Equals("looping"))
+						{
+							// TODO: Looping
+						}
+						
+						// loop_to
+						else if (attribute.Name.Equals("loop_to"))
+							animation.loopTo = int.Parse(attribute.Value);
+					}
+					
+					foreach(XmlElement child2 in child)
+					{
+						// meta_data
+						if (child2.Name.Equals("meta_data"))
+							ReadMetaData(child2, animation.metaData);
+						
+						// mainline
+						else if (child2.Name.Equals("mainline"))
+							ReadMainline(child2, animation);
+						
+						// timeline
+						else if (child2.Name.Equals("timeline"))
+							ReadTimeline(child2, animation);
+					}
+				}
+			}
+		}
+		
+		void ReadMainline(XmlElement element, SpriterAnimation animation)
+		{
+			foreach(XmlElement child in element)
+			{
+				// key
+				if (child.Name.Equals("key"))
+				{
+					SpriterMainlineKey key = new SpriterMainlineKey();
+					animation.mainline.keys.Add(key);
+					
+					foreach(XmlAttribute attribute in child.Attributes)
+					{
+						// id
+						if (attribute.Name.Equals("id"))
+							key.ID = int.Parse(attribute.Value);
+						
+						// time
+						else if (attribute.Name.Equals("time"))
+							key.time = int.Parse(attribute.Value);
+					}
+					
+					foreach(XmlElement child2 in child)
+					{
+						// meta_data
+						if (child2.Name.Equals("meta_data"))
+							ReadMetaData(child2, key.metaData);
+						
+						// hierarchy
+						else if (child2.Name.Equals("hierarchy"))
+							ReadHierarchy(child2, key.hierarchy);
+						
+						// object
+						else if (child2.Name.Equals("object"))
+							ReadMainlineObject(child2, key);
+						
+						// object_ref
+						else if (child2.Name.Equals("object_ref"))
+							ReadMainlineObjectRef(child2, key);
+					}
+				}
+			}
+		}
+		
+		void ReadHierarchy(XmlElement element, SpriterHierarchy hierarchy)
+		{
+			foreach(XmlElement child in element)
+			{
+				// bone
+				if (child.Name.Equals("bone"))
+				{
+					SpriterMainlineBone bone = new SpriterMainlineBone();
+					hierarchy.bones.Add(bone);
+					
+					Vector2 position = Vector2.zero, scale = Vector2.zero;
+					Color color = Color.white;
+					
+					foreach(XmlAttribute attribute in child.Attributes)
+					{
+						// id
+						if (attribute.Name.Equals("id"))
+							bone.ID = int.Parse(attribute.Value);
+						
+						// parent
+						else if (attribute.Name.Equals("parent"))
+							bone.parent = int.Parse(attribute.Value);
+						
+						// x, y
+						else if (attribute.Name.Equals("x"))
+							position.x = float.Parse(attribute.Value);
+						else if (attribute.Name.Equals("y"))
+							position.y = float.Parse(attribute.Value);
+						
+						// angle
+						else if (attribute.Name.Equals("angle"))
+							bone.angle = float.Parse(attribute.Value);
+						
+						// scale_x, scale_y
+						else if (attribute.Name.Equals("scale_x"))
+							scale.x = float.Parse(attribute.Value);
+						else if (attribute.Name.Equals("scale_y"))
+							scale.y = float.Parse(attribute.Value);
+						
+						// r, g, b, a
+						else if (attribute.Name.Equals("r"))
+							color.r = float.Parse(attribute.Value);
+						else if (attribute.Name.Equals("g"))
+							color.g = float.Parse(attribute.Value);
+						else if (attribute.Name.Equals("b"))
+							color.b = float.Parse(attribute.Value);
+						else if (attribute.Name.Equals("a"))
+							color.a = float.Parse(attribute.Value);
+					}
+					
+					// Assign vector values
+					bone.position = position;
+					bone.color = color;
+					
+					foreach(XmlElement child2 in child)
+					{
+						// meta_data
+						if (child2.Name.Equals("meta_data"))
+							ReadMetaData(child2, bone.metaData);
+					}
+				}
+				
+				// bone_ref
+				else if (child.Name.Equals("bone_ref"))
+				{
+					SpriterMainlineBoneRef boneRef = new SpriterMainlineBoneRef();
+					hierarchy.bones.Add(boneRef);
+					
+					foreach(XmlAttribute attribute in child.Attributes)
+					{
+						// id
+						if (attribute.Name.Equals("id"))
+							boneRef.ID = int.Parse(attribute.Value);
+						
+						// parent
+						else if (attribute.Name.Equals("parent"))
+							boneRef.parent = int.Parse(attribute.Value);
+						
+						// timeline
+						else if (attribute.Name.Equals("timeline"))
+							boneRef.timeline = int.Parse(attribute.Value);
+						
+						// key
+						else if (attribute.Name.Equals("key"))
+							boneRef.key = int.Parse(attribute.Value);
+						
+						// TODO: Object reference - not in this method
+					}
+				}
+			}
+		}
+		
+		void ReadMainlineObject(XmlElement element, SpriterMainlineKey key)
+		{
+			SpriterMainlineObject obj = new SpriterMainlineObject();
+			key.objects.Add(obj);
+			
+			Vector2 position = Vector2.zero, pivot = Vector2.zero, scale = Vector2.zero;
+			Color color = Color.white;
+			
+			foreach(XmlAttribute attribute in element.Attributes)
+			{
+				// id
+				if (attribute.Name.Equals("id"))
+					obj.ID = int.Parse(attribute.Value);
+				
+				// parent
+				else if (attribute.Name.Equals("parent"))
+					obj.parent = int.Parse(attribute.Value);
+				
+				// object_type
+				else if (attribute.Name.Equals("object_type"))
+				{
+					// TODO
+				}
+				
+				// atlas
+				else if (attribute.Name.Equals("atlas"))
+					obj.atlas = int.Parse(attribute.Value);
+				
+				// folder
+				else if (attribute.Name.Equals("folder"))
+					obj.folder = int.Parse(attribute.Value);
+
+				// file
+				else if (attribute.Name.Equals("file"))
+					obj.file = int.Parse(attribute.Value);
+
+				
+				// TODO: Object references
+			
+				// usage
+				else if (attribute.Name.Equals("usage"))
+				{
+					// TODO
+				}
+				
+				// blend_mode
+				else if (attribute.Name.Equals("blend_mode"))
+				{
+					// TODO
+				}
+				
+				// name
+				else if (attribute.Name.Equals("name"))
+					obj.name = attribute.Value;
+				
+				// x, y
+				else if (attribute.Name.Equals("x"))
+					position.x = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("y"))
+					position.y = float.Parse(attribute.Value);
+				
+				// pivot_x, pivot_y
+				else if (attribute.Name.Equals("pivot_x"))
+					pivot.x = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("pivot_y"))
+					pivot.y = float.Parse(attribute.Value);
+				
+				// angle
+				else if (attribute.Name.Equals("angle"))
+					obj.angle = float.Parse(attribute.Value);
+				
+				// w, h
+				else if (attribute.Name.Equals("w"))
+					obj.pixelWidth = int.Parse(attribute.Value);
+				else if (attribute.Name.Equals("h"))
+					obj.pixelHeight = int.Parse(attribute.Value);
+				
+				// scale_x, scale_y
+				else if (attribute.Name.Equals("scale_x"))
+					scale.x = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("scale_y"))
+					scale.y = float.Parse(attribute.Value);
+				
+				// r, g, b, a
+				else if (attribute.Name.Equals("r"))
+					color.r = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("g"))
+					color.g = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("b"))
+					color.b = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("a"))
+					color.a = float.Parse(attribute.Value);
+				
+				// variable_type
+				else if (attribute.Name.Equals("variable_type"))
+				{
+					// TODO
+				}
+				
+				// value
+				else if (attribute.Name.Equals("value"))
+				{
+					// TODO
+				}
+				
+				// min, max
+				else if (attribute.Name.Equals("min"))
+				{
+					// TODO
+				}
+				else if (attribute.Name.Equals("max"))
+				{
+					// TODO
+				}
+				
+				// animation
+				else if (attribute.Name.Equals("animation"))
+					obj.entityAnimation = int.Parse(attribute.Value);
+				
+				// t
+				else if (attribute.Name.Equals("t"))
+					obj.entityT = float.Parse(attribute.Value);
+				
+				// z_index
+				else if (attribute.Value.Equals("z_index"))
+					obj.zIndex = int.Parse(attribute.Value);
+				
+				// volume
+				else if (attribute.Name.Equals("volume"))
+					obj.volume = float.Parse(attribute.Value);
+				
+				// panning
+				else if (attribute.Name.Equals("panning"))
+					obj.panning = float.Parse(attribute.Value);
+			}
+			
+			// Assign vector values
+			obj.position = position;
+			obj.pivot = pivot;
+			obj.scale = scale;
+			obj.color = color;
+			
+			foreach(XmlElement child in element)
+			{
+				// meta_data
+				if (child.Name.Equals("meta_data"))
+					ReadMetaData(child, obj.metaData);
+			}
+		}
+		
+		void ReadMainlineObjectRef(XmlElement element, SpriterMainlineKey key)
+		{
+			SpriterMainlineObjectRef obj = new SpriterMainlineObjectRef();
+			key.objects.Add(obj);
+		
+			foreach(XmlAttribute attribute in element.Attributes)
+			{
+				// id
+				if (attribute.Name.Equals("id"))
+					obj.ID = int.Parse(attribute.Value);
+				
+				// parent
+				else if (attribute.Name.Equals("parent"))
+					obj.parent = int.Parse(attribute.Value);
+				
+				// timeline
+				else if (attribute.Name.Equals("timeline"))
+					obj.timeline = int.Parse(attribute.Value);
+				
+				// key
+				else if (attribute.Name.Equals("key"))
+					obj.key = int.Parse(attribute.Value);
+				
+				// TODO: Object reference - not in this method
+		
+				// z_index
+				else if (attribute.Value.Equals("z_index"))
+					obj.zIndex = int.Parse(attribute.Value);
+			}
+		}
+		
+		void ReadTimeline(XmlElement element, SpriterAnimation animation)
+		{
+			SpriterTimeline timeline = new SpriterTimeline();
+			animation.timelines.Add(timeline);
+			
+			foreach(XmlAttribute attribute in element.Attributes)
+			{
+				// id
+				if (attribute.Name.Equals("id"))
+					timeline.ID = int.Parse(attribute.Value);
+				
+				// name
+				else if (attribute.Name.Equals("name"))
+					timeline.name = attribute.Value;
+				
+				// object_type
+				else if (attribute.Name.Equals("object_type"))
+				{
+					// TODO
+				}
+				
+				// variable_type
+				else if (attribute.Name.Equals("variable_type"))
+				{
+					// TODO
+				}
+				
+				// usage
+				else if (attribute.Name.Equals("usage"))
+				{
+					// TODO
+				}
+			}
+			
+			foreach(XmlElement child in element)
+			{
+				// meta_data
+				if (child.Name.Equals("meta_data"))
+					ReadMetaData(child, timeline.metaData);
+				
+				// key
+				else if (child.Name.Equals("key"))
+				{
+					SpriterTimelineKey key = new SpriterTimelineKey();
+					timeline.keys.Add(key);
+					
+					Vector2 tangents = Vector2.zero;
+					
+					foreach(XmlAttribute attribute in child.Attributes)
+					{
+						// id
+						if (attribute.Name.Equals("id"))
+							key.ID = int.Parse(attribute.Value);
+						
+						// time
+						else if (attribute.Name.Equals("time"))
+							key.time = int.Parse(attribute.Value);
+						
+						// curve_type
+						else if (attribute.Name.Equals("curve_type"))
+						{
+							// TODO
+						}
+						
+						// c1, c2
+						else if (attribute.Name.Equals("c1"))
+							tangents.x = float.Parse(attribute.Value);
+						else if (attribute.Name.Equals("c2"))
+							tangents.y = float.Parse(attribute.Value);
+						
+						// spin
+						else if (attribute.Name.Equals("spin"))
+							key.spin = int.Parse(attribute.Value);
+					}
+					
+					// Assign vector values
+					key.curveTangents = tangents;
+					
+					foreach(XmlElement child2 in child)
+					{
+						// meta_data
+						if (child2.Name.Equals("meta_data"))
+							ReadMetaData(child2, key.metaData);
+						
+						// bone
+						else if (child2.Name.Equals("bone"))
+							ReadTimelineBone(child2, key);
+						
+						// object
+						else if (child2.Name.Equals("object"))
+							ReadTimelineObject(child2, key);
+					}
+				}
+			}
+		}
+		
+		void ReadTimelineBone(XmlElement element, SpriterTimelineKey key)
 		{
 			throw new NotImplementedException();
 		}
 		
-		// TODO
-		void ReadEntity(XmlElement element)
+		void ReadTimelineObject(XmlElement element, SpriterTimelineKey key)
 		{
 			throw new NotImplementedException();
 		}
-
+		
 		void ReadCharacterMap(XmlElement element)
 		{
 			foreach(XmlAttribute attribute in element.Attributes)
