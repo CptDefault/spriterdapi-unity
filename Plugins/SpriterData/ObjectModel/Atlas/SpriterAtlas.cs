@@ -52,5 +52,7 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	{
 		public int ID { get; internal set; }
 		public string fullPath { get; internal set; }
+		public int folderID { get; internal set; }
+		public string folderName { get; internal set; }
 	}
 }
