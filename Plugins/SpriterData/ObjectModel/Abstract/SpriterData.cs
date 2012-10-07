@@ -202,8 +202,8 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 			
 			this.metaData.Clear();
 			
-			this.versionInfo.generator = "SpriterDAPI-Unity";
-			this.versionInfo.generatorVersion = "1.0";
+			this.versionInfo.generator = SpriterDataVersionInfo.generator;
+			this.versionInfo.generatorVersion = SpriterDataVersionInfo.generatorVersion;
 			this.versionInfo.pixelArtMode = false;
 			this.versionInfo.pixelArtModeRaw = "false";
 			this.versionInfo.version = "";
