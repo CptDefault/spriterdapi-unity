@@ -28,11 +28,16 @@ using UnityEngine;
 
 namespace BrashMonkey.Spriter.Data.ObjectModel
 {
+	public abstract class SpriterTimelineObjectBase
+	{
+		// Currently no data
+	}
+	
 	/// <summary>
 	/// Represents an object on a timeline.
 	/// </summary>
 	/// TODO: Comments
-	public sealed class SpriterTimelineObject
+	public sealed class SpriterTimelineObject : SpriterTimelineObjectBase
 	{
 		public SpriterAtlas targetAtlas { get; internal set; }
 		public SpriterFile targetFile { get; internal set; }

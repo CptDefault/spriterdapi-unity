@@ -62,12 +62,12 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		/// <summary>
 		/// The list of keyframe objects.
 		/// </summary>
-		public List<SpriterTimelineObject> objects { get; internal set; }
+		public List<SpriterTimelineObjectBase> objects { get; internal set; }
 		
 		public SpriterTimelineKey()
 		{
 			metaData = new List<SpriterMetaData>();
-			objects = new List<SpriterTimelineObject>();
+			objects = new List<SpriterTimelineObjectBase>();
 		}
 	}
 }
