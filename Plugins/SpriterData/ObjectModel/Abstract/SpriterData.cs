@@ -81,9 +81,8 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		/// </summary>
 		public string version { get; internal set; }
 		
-		/// TODO: This should have a recommended format in the specification (UNIX timestamp?)
 		/// <summary>
-		/// Custom last modified timestamp.
+		/// Custom last modified timestamp. UNIX timestamp (64-bit).
 		/// </summary>
 		public string lastModified { get; internal set; }
 		
