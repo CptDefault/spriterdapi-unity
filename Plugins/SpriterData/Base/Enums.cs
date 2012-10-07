@@ -1,5 +1,3 @@
-// Spriter enumerations
-// Enums.cs
 // Spriter Data API - Unity
 //  
 // Authors:
@@ -26,9 +24,7 @@
 // Spriter is (c) by BrashMonkey.
 //
 namespace BrashMonkey.Spriter.Data
-{
-	// TODO: Use native scml names to make enum parsing easier
-	
+{	
 	/// <summary>
 	/// File type
 	/// </summary>
