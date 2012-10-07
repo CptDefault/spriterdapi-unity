@@ -31,12 +31,12 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	/// <summary>
 	/// Represents an object on the mainline.
 	/// </summary>
-	/// /// TODO: Entitiy animation uses a int here instead of an string? Inconsistency
 	public sealed class SpriterMainlineObject : SpriterMainlineObjectBase
 	{
 		public int ID { get; internal set; }
 		public int parent { get; internal set; }
 		public ObjectType objectType { get; internal set; }
+		public string objectTypeRaw { get; internal set; }
 		
 		public SpriterAtlas targetAtlas { get; internal set; }
 		public SpriterFile targetFile { get; internal set; }
@@ -57,6 +57,7 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		public Vector2 scale { get; internal set; }
 		public Color color { get; internal set; }
 		public VariableType variableType { get; internal set; }
+		public string variableTypeRaw { get; internal set; }
 		public object value { get; internal set; }
 		public object min { get; internal set; }
 		public object max { get; internal set; }
