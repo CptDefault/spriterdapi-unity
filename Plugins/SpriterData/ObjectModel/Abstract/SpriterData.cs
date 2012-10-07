@@ -210,6 +210,79 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		}
 		
 		/// <summary>
+		/// Finds a file by its folder and file ID.
+		/// </summary>
+		public SpriterFile FindFile(int folderID, int fileID)
+		{
+			return null;
+		}
+		
+		/// <summary>
+		/// Finds an atlas by its ID.
+		/// </summary>
+		public SpriterAtlas FindAtlas(int ID)
+		{
+			foreach(SpriterAtlas atlas in this.atlases)
+			{
+				if (atlas.ID == ID)
+					return atlas;
+			}
+			return null;
+		}
+		
+		/// <summary>
+		/// Finds a timeline object for an animation by its ID and time.
+		/// </summary>
+		/// TODO: Timelines currently only track one object, can probably simplify object model and remove the list
+		public SpriterTimelineObject FindTimelineObject(SpriterAnimation animation, int timelineID, int keyID, int time)
+		{
+			foreach(SpriterTimeline timeline in animation.timelines)
+			{
+				if (timeline.ID != timelineID)
+					continue;
+				
+				foreach(SpriterTimelineKey key in timeline.keys)
+				{
+					if (key.ID != keyID)
+						continue;
+					
+					foreach(SpriterTimelineObjectBase obj in key.objects)
+					{
+						if (obj is SpriterTimelineObject)
+							return (SpriterTimelineObject)obj;
+					}
+				}
+			}
+			return null;
+		}
+		
+		/// <summary>
+		/// Finds a timeline bone for an animation by its ID and time.
+		/// </summary>
+		/// TODO: Timelines currently only track one object, can probably simplify object model and remove the list
+		public SpriterTimelineBone FindTimelineBone(SpriterAnimation animation, int timelineID, int keyID, int time)
+		{
+			foreach(SpriterTimeline timeline in animation.timelines)
+			{
+				if (timeline.ID != timelineID)
+					continue;
+				
+				foreach(SpriterTimelineKey key in timeline.keys)
+				{
+					if (key.ID != keyID)
+						continue;
+					
+					foreach(SpriterTimelineObjectBase obj in key.objects)
+					{
+						if (obj is SpriterTimelineBone)
+							return (SpriterTimelineBone)obj;
+					}
+				}
+			}
+			return null;
+		}
+		
+		/// <summary>
 		/// Sends the data to the specific implementation.
 		/// </summary>
 		protected abstract void ToImplementation();
