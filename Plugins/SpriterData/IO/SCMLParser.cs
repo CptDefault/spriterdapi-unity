@@ -123,7 +123,6 @@ namespace BrashMonkey.Spriter.Data.IO
 			}
 		}
 		
-		// TODO: Enum comparison needs changing here
 		void ReadMetaData(XmlElement element, List<SpriterMetaData> metaDataList)
 		{
 			foreach(XmlElement child in element)
@@ -133,53 +132,74 @@ namespace BrashMonkey.Spriter.Data.IO
 				{
 					SpriterTagMetaData metaData = new SpriterTagMetaData();
 					metaDataList.Add(metaData);
-					metaData.name = child.Attributes.GetNamedItem("name").Value;
+					
+					foreach(XmlAttribute attribute in child.Attributes)
+					{
+						// name
+						if (attribute.Name.Equals("name"))
+							metaData.name = attribute.Value;
+					}
 				}
 				
 				// variable
 				else if (child.Name.Equals("variable"))
 				{
-					var attribute = child.Attributes.GetNamedItem("curve_type");
+					bool isTweenedVariable = child.Attributes.GetNamedItem("curve_type") != null;
 					
 					// tweened variable
-					if (attribute != null)
+					if (isTweenedVariable)
 					{
 						SpriterTweenedVariableMetaData metaData = new SpriterTweenedVariableMetaData();
 						metaDataList.Add(metaData);
-						metaData.name = child.Attributes.GetNamedItem("name").Value;
-						metaData.variableTypeRaw = child.Attributes.GetNamedItem("type").Value;
 						
-						// string, int, or float
-						if (metaData.variableTypeRaw.Equals("string"))
+						Vector2 curveTangents = Vector2.zero;
+						
+						foreach(XmlAttribute attribute in child.Attributes)
 						{
-							metaData.variableType = VariableType.String;
-							metaData.value = child.Attributes.GetNamedItem("value").Value;
-						}
-						else if (metaData.variableTypeRaw.Equals("int"))
-						{
-							metaData.variableType = VariableType.Int;
-							metaData.value = int.Parse(child.Attributes.GetNamedItem("value").Value);
-						}
-						else if (metaData.variableTypeRaw.Equals("float"))
-						{
-							metaData.variableType = VariableType.Float;
-							metaData.value = float.Parse(child.Attributes.GetNamedItem("value").Value);
+							// name
+							if (attribute.Name.Equals("name"))
+								metaData.name = attribute.Value;
+							
+							// type
+							else if (attribute.Name.Equals("type"))
+							{
+								metaData.variableTypeRaw = attribute.Value;
+								metaData.variableType = SpriterDataHelpers.ParseSpriterEnum<VariableType>(metaData.variableTypeRaw);
+							}
+							
+							// value
+							else if (attribute.Name.Equals("value"))
+							{
+								switch (metaData.variableType)
+								{
+								case VariableType.String:
+									metaData.value = attribute.Value;
+									break;
+								case VariableType.Int:
+									metaData.value = int.Parse(attribute.Value);
+									break;
+								case VariableType.Float:
+									metaData.value = float.Parse(attribute.Value);
+									break;
+								}
+							}
+							
+							// curve_type
+							else if (attribute.Name.Equals("curve_type"))
+							{
+								metaData.curveTypeRaw = attribute.Value;
+								metaData.curveType = SpriterDataHelpers.ParseSpriterEnum<CurveType>(metaData.curveTypeRaw);
+							}
+							
+							// c1, c2
+							else if (attribute.Name.Equals("c1"))
+								curveTangents.x = float.Parse(attribute.Value);
+							else if (attribute.Name.Equals("c2"))
+								curveTangents.y = float.Parse(attribute.Value);
 						}
 						
-						metaData.curveTypeRaw = attribute.Value;
-						var curveType = Enum.Parse(typeof(CurveType), metaData.curveTypeRaw, true);
-						
-						metaData.curveType = (CurveType)curveType;
-						
-						switch(metaData.curveType)
-						{
-						case CurveType.Quadratic:
-							metaData.curveTangents = new Vector2(float.Parse(child.Attributes.GetNamedItem("c1").Value), 0);
-							break;
-						case CurveType.Cubic:
-							metaData.curveTangents = new Vector2(float.Parse(child.Attributes.GetNamedItem("c1").Value), float.Parse(child.Attributes.GetNamedItem("c2").Value));
-							break;
-						}
+						// Assign vector values
+						metaData.curveTangents = curveTangents;
 					}
 					
 					// normal variable
@@ -187,24 +207,36 @@ namespace BrashMonkey.Spriter.Data.IO
 					{
 						SpriterVariableMetaData metaData = new SpriterVariableMetaData();
 						metaDataList.Add(metaData);
-						metaData.name = child.Attributes.GetNamedItem("name").Value;
-						metaData.variableTypeRaw = child.Attributes.GetNamedItem("type").Value;
 						
-						// string, int, or float
-						if (metaData.variableTypeRaw.Equals("string"))
+						foreach(XmlAttribute attribute in child.Attributes)
 						{
-							metaData.variableType = VariableType.String;
-							metaData.value = child.Attributes.GetNamedItem("value").Value;
-						}
-						else if (metaData.variableTypeRaw.Equals("int"))
-						{
-							metaData.variableType = VariableType.Int;
-							metaData.value = int.Parse(child.Attributes.GetNamedItem("value").Value);
-						}
-						else if (metaData.variableTypeRaw.Equals("float"))
-						{
-							metaData.variableType = VariableType.Float;
-							metaData.value = float.Parse(child.Attributes.GetNamedItem("value").Value);
+							// name
+							if (attribute.Name.Equals("name"))
+								metaData.name = attribute.Value;
+							
+							// type
+							else if (attribute.Name.Equals("type"))
+							{
+								metaData.variableTypeRaw = attribute.Value;
+								metaData.variableType = SpriterDataHelpers.ParseSpriterEnum<VariableType>(metaData.variableTypeRaw);
+							}
+							
+							// value
+							else if (attribute.Name.Equals("value"))
+							{
+								switch (metaData.variableType)
+								{
+								case VariableType.String:
+									metaData.value = attribute.Value;
+									break;
+								case VariableType.Int:
+									metaData.value = int.Parse(attribute.Value);
+									break;
+								case VariableType.Float:
+									metaData.value = float.Parse(attribute.Value);
+									break;
+								}
+							}
 						}
 					}
 				}
@@ -244,7 +276,8 @@ namespace BrashMonkey.Spriter.Data.IO
 					// type
 					if (attribute.Name.Equals("type"))
 					{
-						// TODO: FileType
+						file.typeRaw = attribute.Value;
+						file.type = SpriterDataHelpers.ParseSpriterEnum<FileType>(file.typeRaw);
 					}
 					
 					// id
@@ -395,7 +428,8 @@ namespace BrashMonkey.Spriter.Data.IO
 						// looping
 						else if (attribute.Name.Equals("looping"))
 						{
-							// TODO: Looping
+							animation.playbackTypeRaw = attribute.Value;
+							animation.playbackType = SpriterDataHelpers.ParseSpriterEnum<PlaybackType>(animation.playbackTypeRaw);
 						}
 						
 						// loop_to
@@ -577,7 +611,8 @@ namespace BrashMonkey.Spriter.Data.IO
 				// object_type
 				else if (attribute.Name.Equals("object_type"))
 				{
-					// TODO
+					obj.objectTypeRaw = attribute.Value;
+					obj.objectType = SpriterDataHelpers.ParseSpriterEnum<ObjectType>(obj.objectTypeRaw);
 				}
 				
 				// atlas
@@ -598,13 +633,15 @@ namespace BrashMonkey.Spriter.Data.IO
 				// usage
 				else if (attribute.Name.Equals("usage"))
 				{
-					// TODO
+					obj.usageRaw = attribute.Value;
+					obj.usage = SpriterDataHelpers.ParseSpriterEnum<UsageType>(obj.usageRaw);
 				}
 				
 				// blend_mode
 				else if (attribute.Name.Equals("blend_mode"))
 				{
-					// TODO
+					obj.blendModeRaw = attribute.Value;
+					obj.blendMode = SpriterDataHelpers.ParseSpriterEnum<BlendMode>(obj.blendModeRaw);
 				}
 				
 				// name
@@ -652,23 +689,51 @@ namespace BrashMonkey.Spriter.Data.IO
 				// variable_type
 				else if (attribute.Name.Equals("variable_type"))
 				{
-					// TODO
+					obj.variableTypeRaw = attribute.Value;
+					obj.variableType = SpriterDataHelpers.ParseSpriterEnum<VariableType>(obj.variableTypeRaw);
 				}
 				
 				// value
 				else if (attribute.Name.Equals("value"))
 				{
-					// TODO
+					switch (obj.variableType)
+					{
+					case VariableType.String:
+						obj.value = attribute.Value;
+						break;
+					case VariableType.Int:
+						obj.value = int.Parse(attribute.Value);
+						break;
+					case VariableType.Float:
+						obj.value = float.Parse(attribute.Value);
+						break;
+					}
 				}
 				
 				// min, max
 				else if (attribute.Name.Equals("min"))
 				{
-					// TODO
+					switch (obj.variableType)
+					{
+					case VariableType.Int:
+						obj.value = int.Parse(attribute.Value);
+						break;
+					case VariableType.Float:
+						obj.value = float.Parse(attribute.Value);
+						break;
+					}
 				}
 				else if (attribute.Name.Equals("max"))
 				{
-					// TODO
+					switch (obj.variableType)
+					{
+					case VariableType.Int:
+						obj.value = int.Parse(attribute.Value);
+						break;
+					case VariableType.Float:
+						obj.value = float.Parse(attribute.Value);
+						break;
+					}
 				}
 				
 				// animation
@@ -755,19 +820,22 @@ namespace BrashMonkey.Spriter.Data.IO
 				// object_type
 				else if (attribute.Name.Equals("object_type"))
 				{
-					// TODO
+					timeline.objectTypeRaw = attribute.Value;
+					timeline.objectType = SpriterDataHelpers.ParseSpriterEnum<ObjectType>(timeline.objectTypeRaw);
 				}
 				
 				// variable_type
 				else if (attribute.Name.Equals("variable_type"))
 				{
-					// TODO
+					timeline.variableTypeRaw = attribute.Value;
+					timeline.variableType = SpriterDataHelpers.ParseSpriterEnum<VariableType>(timeline.variableTypeRaw);
 				}
 				
 				// usage
 				else if (attribute.Name.Equals("usage"))
 				{
-					// TODO
+					timeline.usageRaw = attribute.Value;
+					timeline.usage = SpriterDataHelpers.ParseSpriterEnum<UsageType>(timeline.usageRaw);
 				}
 			}
 			
@@ -798,7 +866,8 @@ namespace BrashMonkey.Spriter.Data.IO
 						// curve_type
 						else if (attribute.Name.Equals("curve_type"))
 						{
-							// TODO
+							key.curveTypeRaw = attribute.Value;
+							key.curveType = SpriterDataHelpers.ParseSpriterEnum<CurveType>(key.curveTypeRaw);
 						}
 						
 						// c1, c2
