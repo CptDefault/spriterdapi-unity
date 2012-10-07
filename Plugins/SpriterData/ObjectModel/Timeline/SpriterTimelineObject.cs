@@ -32,7 +32,6 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	/// Represents an object on a timeline.
 	/// </summary>
 	/// TODO: Comments
-	/// TODO: Entitiy animation uses a string here instead of an int? Inconsistency
 	public sealed class SpriterTimelineObject
 	{
 		public SpriterAtlas targetAtlas { get; internal set; }
@@ -54,7 +53,7 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		public object value { get; internal set; }
 		public object min { get; internal set; }
 		public object max { get; internal set; }
-		public string entityAnimation { get; internal set; }
+		public int entityAnimation { get; internal set; }
 		public float entityT { get; internal set; }
 		public float volume { get; internal set; }
 		public float panning { get; internal set; }
