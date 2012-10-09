@@ -32,6 +32,7 @@ using UnityEngine;
 
 namespace BrashMonkey.Spriter.Data.IO
 {
+	// TODO: Some objects still need default constructors (-1 for references)
 	internal class SCMLParser
 	{	
 		public XmlDocument scml { get; private set; }
@@ -56,43 +57,46 @@ namespace BrashMonkey.Spriter.Data.IO
 			// Reset all data
 			m_Data.Reset();
 			
-			// Convert from scml to 
+			// Convert from SCML to object model
 			foreach(XmlElement element in scml.DocumentElement)
 			{
-				// Spriter data
+				// spriter_data
 				if (element.Name.Equals("spriter_data"))
 				{
-					// Version info
+					// version info
 					ReadVersionInfo(element);
 					
 					foreach(XmlElement child in element)
 					{
-						// Document meta data
+						// meta_data
 						if (child.Name.Equals("meta_data"))
 							ReadMetaData(child, m_Data.metaData);
 						
-						// Files
+						// folder
 						else if (child.Name.Equals("folder"))
 							ReadFolder(child);
 						
-						// Atlases
+						// atlas
 						else if (child.Name.Equals("atlas"))
 							ReadAtlas(child);
 						
-						// Entity
+						// entity
 						else if (child.Name.Equals("entity"))
 							ReadEntity(child);
 						
-						// Character Map
+						// character_map
 						else if (child.Name.Equals("character_map"))
 							ReadCharacterMap(child);
 						
-						// Document Info
+						// document_info
 						else if (child.Name.Equals("document_info"))
 							ReadDocumentInfo(child);
 					}
 				}
 			}
+			
+			// Find object references
+			FindObjectReferences();
 		}
 		
 		void ReadVersionInfo(XmlElement element)
@@ -572,8 +576,6 @@ namespace BrashMonkey.Spriter.Data.IO
 						// key
 						else if (attribute.Name.Equals("key"))
 							boneRef.key = int.Parse(attribute.Value);
-						
-						// TODO: Object reference - not in this method
 					}
 				}
 			}
@@ -615,9 +617,6 @@ namespace BrashMonkey.Spriter.Data.IO
 				// file
 				else if (attribute.Name.Equals("file"))
 					obj.file = int.Parse(attribute.Value);
-
-				
-				// TODO: Object references
 			
 				// usage
 				else if (attribute.Name.Equals("usage"))
@@ -713,11 +712,6 @@ namespace BrashMonkey.Spriter.Data.IO
 					obj.panning = float.Parse(attribute.Value);
 			}
 			
-			// Assign vector values
-			obj.position = position;
-			obj.pivot = pivot;
-			obj.scale = scale;
-			obj.color = color;
 			
 			foreach(XmlElement child in element)
 			{
@@ -725,6 +719,16 @@ namespace BrashMonkey.Spriter.Data.IO
 				if (child.Name.Equals("meta_data"))
 					ReadMetaData(child, obj.metaData);
 			}
+			
+			// Assign vector values
+			obj.position = position;
+			obj.pivot = pivot;
+			obj.scale = scale;
+			obj.color = color;
+			
+			// Object references
+			obj.targetAtlas = m_Data.FindAtlas(obj.atlas);
+			obj.targetFile = m_Data.FindFile(obj.folder, obj.file);
 		}
 		
 		void ReadMainlineObjectRef(XmlElement element, SpriterMainlineKey key)
@@ -749,8 +753,6 @@ namespace BrashMonkey.Spriter.Data.IO
 				// key
 				else if (attribute.Name.Equals("key"))
 					obj.key = int.Parse(attribute.Value);
-				
-				// TODO: Object reference - not in this method
 		
 				// z_index
 				else if (attribute.Value.Equals("z_index"))
@@ -929,9 +931,7 @@ namespace BrashMonkey.Spriter.Data.IO
 				// file
 				else if (attribute.Name.Equals("file"))
 					obj.file = int.Parse(attribute.Value);
-				
-				// TODO - references
-				
+
 				// name
 				else if (attribute.Name.Equals("name"))
 					obj.name = attribute.Value;
@@ -1020,6 +1020,10 @@ namespace BrashMonkey.Spriter.Data.IO
 			obj.pivot = pivot;
 			obj.scale = scale;
 			obj.color = color;
+			
+			// Object references
+			obj.targetAtlas = m_Data.FindAtlas(obj.atlas);
+			obj.targetFile = m_Data.FindFile(obj.folder, obj.file);
 		}
 		
 		void ReadCharacterMap(XmlElement element)
@@ -1038,11 +1042,11 @@ namespace BrashMonkey.Spriter.Data.IO
 			// Maps
 			foreach(XmlElement child in element)
 			{
+				SpriterMap map = new SpriterMap();
+				m_Data.characterMap.maps.Add(map);
+				
 				foreach(XmlAttribute attribute in child.Attributes)
-				{
-					SpriterMap map = new SpriterMap();
-					m_Data.characterMap.maps.Add(map);
-					
+				{	
 					// atlas
 					if (attribute.Name.Equals("atlas"))
 						map.atlas = int.Parse(attribute.Value);
@@ -1066,9 +1070,14 @@ namespace BrashMonkey.Spriter.Data.IO
 					// target_file
 					else if (attribute.Name.Equals("target_file"))
 						map.targetFile = int.Parse(attribute.Value);
-					
-					// TODO: Object references
 				}
+				
+				// Object references
+				map.sourceFile = m_Data.FindFile(map.folder, map.file);
+				map.sourceAtlas = m_Data.FindAtlas(map.atlas);
+				
+				map.destinationFile = m_Data.FindFile(map.targetFolder, map.targetFile);
+				map.destinationAtlas = m_Data.FindAtlas(map.targetAtlas);
 			}
 		}
 
@@ -1102,6 +1111,37 @@ namespace BrashMonkey.Spriter.Data.IO
 			}
 		}
 		
+		void FindObjectReferences()
+		{
+			SpriterMainlineBoneRef boneRef = null;
+			SpriterMainlineObjectRef objRef = null;
+			
+			foreach(SpriterAnimation animation in m_Data.entity.animations)
+			{
+				foreach(SpriterMainlineKey key in animation.mainline.keys)
+				{
+					foreach(SpriterMainlineBoneBase bone in key.hierarchy.bones)
+					{
+						// Bone references
+						if (bone is SpriterMainlineBoneRef)
+						{
+							boneRef = (SpriterMainlineBoneRef)bone;
+							boneRef.target = m_Data.FindTimelineBone(animation, boneRef.timeline, boneRef.key, key.time);
+						}
+					}
+					
+					foreach(SpriterMainlineObjectBase obj in key.objects)
+					{
+						// Object references
+						if (obj is SpriterMainlineObjectRef)
+						{
+							objRef = (SpriterMainlineObjectRef)obj;
+							objRef.target = m_Data.FindTimelineObject(animation, objRef.timeline, objRef.key, key.time);
+						}
+					}
+				}
+			}
+		}
 		#endregion
 		
 		#region Save
