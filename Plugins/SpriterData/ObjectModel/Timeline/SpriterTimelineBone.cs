@@ -31,7 +31,7 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	/// <summary>
 	/// Represents a persistent (tweened) bone.
 	/// </summary>
-	public abstract class SpriterTimelineBone : SpriterTimelineObjectBase
+	public sealed class SpriterTimelineBone : SpriterTimelineObjectBase
 	{
 		public Vector2 position { get; internal set; }
 		public float angle { get; internal set; }
