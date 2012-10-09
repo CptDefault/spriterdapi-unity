@@ -169,20 +169,7 @@ namespace BrashMonkey.Spriter.Data.IO
 							
 							// value
 							else if (attribute.Name.Equals("value"))
-							{
-								switch (metaData.variableType)
-								{
-								case VariableType.String:
-									metaData.value = attribute.Value;
-									break;
-								case VariableType.Int:
-									metaData.value = int.Parse(attribute.Value);
-									break;
-								case VariableType.Float:
-									metaData.value = float.Parse(attribute.Value);
-									break;
-								}
-							}
+								metaData.value = ReadVariable(metaData.variableType, attribute.Value);
 							
 							// curve_type
 							else if (attribute.Name.Equals("curve_type"))
@@ -223,26 +210,28 @@ namespace BrashMonkey.Spriter.Data.IO
 							
 							// value
 							else if (attribute.Name.Equals("value"))
-							{
-								switch (metaData.variableType)
-								{
-								case VariableType.String:
-									metaData.value = attribute.Value;
-									break;
-								case VariableType.Int:
-									metaData.value = int.Parse(attribute.Value);
-									break;
-								case VariableType.Float:
-									metaData.value = float.Parse(attribute.Value);
-									break;
-								}
-							}
+								metaData.value = ReadVariable(metaData.variableType, attribute.Value);
 						}
 					}
 				}
 			}
 		}
-
+		
+		object ReadVariable(VariableType variableType, string value)
+		{
+			switch (variableType)
+			{
+			case VariableType.String:
+				return value;
+			case VariableType.Int:
+				return int.Parse(value);
+			case VariableType.Float:
+				return float.Parse(value);
+			}
+			
+			return null;
+		}
+			
 		void ReadFolder(XmlElement element)
 		{
 			int folderID = -1;
@@ -695,46 +684,13 @@ namespace BrashMonkey.Spriter.Data.IO
 				
 				// value
 				else if (attribute.Name.Equals("value"))
-				{
-					switch (obj.variableType)
-					{
-					case VariableType.String:
-						obj.value = attribute.Value;
-						break;
-					case VariableType.Int:
-						obj.value = int.Parse(attribute.Value);
-						break;
-					case VariableType.Float:
-						obj.value = float.Parse(attribute.Value);
-						break;
-					}
-				}
+					obj.value = ReadVariable(obj.variableType, attribute.Value);
 				
 				// min, max
 				else if (attribute.Name.Equals("min"))
-				{
-					switch (obj.variableType)
-					{
-					case VariableType.Int:
-						obj.value = int.Parse(attribute.Value);
-						break;
-					case VariableType.Float:
-						obj.value = float.Parse(attribute.Value);
-						break;
-					}
-				}
+					obj.min = ReadVariable(obj.variableType, attribute.Value);
 				else if (attribute.Name.Equals("max"))
-				{
-					switch (obj.variableType)
-					{
-					case VariableType.Int:
-						obj.value = int.Parse(attribute.Value);
-						break;
-					case VariableType.Float:
-						obj.value = float.Parse(attribute.Value);
-						break;
-					}
-				}
+					obj.max = ReadVariable(obj.variableType, attribute.Value);
 				
 				// animation
 				else if (attribute.Name.Equals("animation"))
@@ -896,7 +852,7 @@ namespace BrashMonkey.Spriter.Data.IO
 						
 						// object
 						else if (child2.Name.Equals("object"))
-							ReadTimelineObject(child2, key);
+							ReadTimelineObject(child2, key, timeline.variableType);
 					}
 				}
 			}
@@ -904,12 +860,166 @@ namespace BrashMonkey.Spriter.Data.IO
 		
 		void ReadTimelineBone(XmlElement element, SpriterTimelineKey key)
 		{
-			throw new NotImplementedException();
+			SpriterTimelineBone bone = new SpriterTimelineBone();
+			key.objects.Add(bone);
+			
+			Vector2 position = Vector2.zero, scale = Vector2.zero;
+			Color color = Color.white;
+			
+			foreach(XmlAttribute attribute in element.Attributes)
+			{
+				// x, y
+				if (attribute.Name.Equals("x"))
+					position.x = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("y"))
+					position.y = float.Parse(attribute.Value);
+				
+				// angle
+				else if (attribute.Name.Equals("angle"))
+					bone.angle = float.Parse(attribute.Value);
+				
+				// scale
+				else if (attribute.Name.Equals("scale_x"))
+					scale.x = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("scale_y"))
+					scale.y = float.Parse(attribute.Value);
+			
+				// color
+				else if (attribute.Name.Equals("r"))
+					color.r = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("g"))
+					color.g = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("b"))
+					color.b = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("a"))
+					color.a = float.Parse(attribute.Value);
+			}
+			
+			foreach(XmlElement child in element)
+			{
+				// meta_data
+				if (child.Name.Equals("meta_data"))
+					ReadMetaData(child, bone.metaData);
+			}
+			
+			// Assign vector values
+			bone.position = position;
+			bone.scale = scale;
+			bone.color = color;
 		}
 		
-		void ReadTimelineObject(XmlElement element, SpriterTimelineKey key)
+		void ReadTimelineObject(XmlElement element, SpriterTimelineKey key, VariableType variableType)
 		{
-			throw new NotImplementedException();
+			SpriterTimelineObject obj = new SpriterTimelineObject();
+			key.objects.Add(obj);
+			
+			Vector2 position = Vector2.zero, pivot = Vector2.zero, scale = Vector2.zero;
+			Color color = Color.white;
+		
+			foreach(XmlAttribute attribute in element.Attributes)
+			{
+				// atlas
+				if (attribute.Name.Equals("atlas"))
+					obj.atlas = int.Parse(attribute.Value);
+				
+				// folder
+				else if (attribute.Name.Equals("folder"))
+					obj.folder = int.Parse(attribute.Value);
+				
+				// file
+				else if (attribute.Name.Equals("file"))
+					obj.file = int.Parse(attribute.Value);
+				
+				// TODO - references
+				
+				// name
+				else if (attribute.Name.Equals("name"))
+					obj.name = attribute.Value;
+				
+				// x, y
+				else if (attribute.Name.Equals("x"))
+					position.x = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("y"))
+					position.y = float.Parse(attribute.Value);
+				
+				// pivot_x, pivot_y
+				else if (attribute.Name.Equals("pivot_x"))
+					pivot.x = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("pivot_y"))
+					pivot.y = float.Parse(attribute.Value);
+				
+				// angle
+				else if (attribute.Name.Equals("angle"))
+					obj.angle = float.Parse(attribute.Value);
+			
+				// w, h
+				else if (attribute.Name.Equals("w"))
+					obj.pixelWidth = int.Parse(attribute.Value);
+				else if (attribute.Name.Equals("h"))
+					obj.pixelHeight = int.Parse(attribute.Value);
+				
+				// scale_x, scale_y
+				else if (attribute.Name.Equals("scale_x"))
+					scale.x = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("scale_y"))
+					scale.y = float.Parse(attribute.Value);
+				
+				// color
+				else if (attribute.Name.Equals("r"))
+					color.r = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("g"))
+					color.g = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("b"))
+					color.b = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("a"))
+					color.a = float.Parse(attribute.Value);
+				
+				// blend_mode
+				else if (attribute.Name.Equals("blend_mode"))
+				{
+					obj.blendModeRaw = attribute.Value;
+					obj.blendMode = SpriterDataHelpers.ParseSpriterEnum<BlendMode>(obj.blendModeRaw);
+				}
+				
+				// value
+				else if (attribute.Name.Equals("value"))
+					obj.value = ReadVariable(variableType, attribute.Value);
+				
+				// min, max
+				else if (attribute.Name.Equals("min"))
+					obj.min = ReadVariable(variableType, attribute.Value);
+				else if (attribute.Name.Equals("max"))
+					obj.max = ReadVariable(variableType, attribute.Value);
+				
+				// animation
+				else if (attribute.Name.Equals("animation"))
+					obj.entityAnimation = int.Parse(attribute.Value);
+				
+				// t
+				else if (attribute.Name.Equals("t"))
+					obj.entityT = float.Parse(attribute.Value);
+				
+				// volume
+				else if (attribute.Name.Equals("volume"))
+					obj.volume = float.Parse(attribute.Value);
+				
+				// panning
+				else if (attribute.Name.Equals("panning"))
+					obj.panning = float.Parse(attribute.Value);
+			}
+			
+			foreach(XmlElement child in element)
+			{
+				// meta_data
+				if (child.Name.Equals("meta_data"))
+					ReadMetaData(child, obj.metaData);
+			}
+			
+			// Assign vector values
+			obj.position = position;
+			obj.pivot = pivot;
+			obj.scale = scale;
+			obj.color = color;
 		}
 		
 		void ReadCharacterMap(XmlElement element)
