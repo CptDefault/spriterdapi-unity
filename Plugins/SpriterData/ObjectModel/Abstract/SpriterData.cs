@@ -212,16 +212,33 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		/// <summary>
 		/// Finds a file by its folder and file ID.
 		/// </summary>
+		/// <remarks>
+		/// Returns null if no file is found or the IDs are invalid.
+		/// </remarks>
 		public SpriterFile FindFile(int folderID, int fileID)
 		{
+			if (folderID < 0 || fileID < 0)
+				return null;
+			
+			foreach(SpriterFile file in this.files)
+			{
+				if (file.ID == fileID && file.folderID == folderID)
+					return file;
+			}
 			return null;
 		}
 		
 		/// <summary>
 		/// Finds an atlas by its ID.
 		/// </summary>
+		/// <remarks>
+		/// Returns null if no atlas is found or the IDs are invalid.
+		/// </remarks>
 		public SpriterAtlas FindAtlas(int ID)
 		{
+			if (ID < 0)
+				return null;
+			
 			foreach(SpriterAtlas atlas in this.atlases)
 			{
 				if (atlas.ID == ID)
@@ -233,9 +250,15 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		/// <summary>
 		/// Finds a timeline object for an animation by its ID and time.
 		/// </summary>
+		///	<remarks>
+		/// Returns null if no object is found or the IDs are invalid.
+		/// </remarks>
 		/// TODO: Timelines currently only track one object, can probably simplify object model and remove the list
 		public SpriterTimelineObject FindTimelineObject(SpriterAnimation animation, int timelineID, int keyID, int time)
 		{
+			if (animation == null || timelineID < 0 || keyID < 0)
+				return null;
+			
 			foreach(SpriterTimeline timeline in animation.timelines)
 			{
 				if (timeline.ID != timelineID)
@@ -259,9 +282,15 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		/// <summary>
 		/// Finds a timeline bone for an animation by its ID and time.
 		/// </summary>
+		///	<remarks>
+		/// Returns null if no bone is found or the IDs are invalid.
+		/// </remarks>
 		/// TODO: Timelines currently only track one object, can probably simplify object model and remove the list
 		public SpriterTimelineBone FindTimelineBone(SpriterAnimation animation, int timelineID, int keyID, int time)
 		{
+			if (animation == null || timelineID < 0 || keyID < 0)
+				return null;
+			
 			foreach(SpriterTimeline timeline in animation.timelines)
 			{
 				if (timeline.ID != timelineID)
