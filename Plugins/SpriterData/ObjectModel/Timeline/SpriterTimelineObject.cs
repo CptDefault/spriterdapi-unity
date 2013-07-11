@@ -2,6 +2,7 @@
 //  
 // Authors:
 //       Josh Montoute <josh@thinksquirrel.com>
+//       Justin Whitfort <cptdefault@gmail.com>
 //
 // 
 // Copyright (c) 2012 Thinksquirrel Software, LLC
@@ -32,7 +33,7 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	/// Represents an object on a timeline.
 	/// </summary>
 	/// TODO: Comments
-	public sealed class SpriterTimelineObject : SpriterTimelineObjectBase
+	public class SpriterTimelineObject : SpriterTimelineObjectBase, ISpriterTimelineObject
 	{
 		public SpriterAtlas targetAtlas { get; internal set; }
 		public SpriterFile targetFile { get; internal set; }

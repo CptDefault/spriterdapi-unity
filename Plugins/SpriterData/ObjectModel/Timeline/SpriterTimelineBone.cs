@@ -2,6 +2,7 @@
 //  
 // Authors:
 //       Josh Montoute <josh@thinksquirrel.com>
+//       Justin Whitfort <cptdefault@gmail.com>
 //
 // 
 // Copyright (c) 2012 Thinksquirrel Software, LLC
@@ -31,7 +32,7 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	/// <summary>
 	/// Represents a persistent (tweened) bone.
 	/// </summary>
-	public sealed class SpriterTimelineBone : SpriterTimelineObjectBase
+	public sealed class SpriterTimelineBone : SpriterTimelineObjectBase, ISpriterTimelineBone
 	{
 		public Vector2 position { get; internal set; }
 		public float angle { get; internal set; }

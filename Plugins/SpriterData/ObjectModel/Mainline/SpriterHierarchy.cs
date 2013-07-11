@@ -2,6 +2,7 @@
 //  
 // Authors:
 //       Josh Montoute <josh@thinksquirrel.com>
+//       Justin Whitfort <cptdefault@gmail.com>
 //
 // 
 // Copyright (c) 2012 Thinksquirrel Software, LLC
@@ -44,13 +45,18 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	
 	public abstract class SpriterMainlineBoneBase
 	{
-		// Currently No data
-	}
-	
-	public sealed class SpriterMainlineBone : SpriterMainlineBoneBase
-	{
 		public int ID { get; internal set; }
 		public int parent { get; internal set; }
+
+		protected SpriterMainlineBoneBase()
+		{
+			parent = -1;
+		}
+	}
+
+	public sealed class SpriterMainlineBone : SpriterMainlineBoneBase, ISpriterTimelineBone
+	{
+		
 		public Vector2 position { get; internal set; }
 		public float angle { get; internal set; }
 		public Vector2 scale { get; internal set; }
@@ -69,8 +75,6 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	
 	public sealed class SpriterMainlineBoneRef : SpriterMainlineBoneBase
 	{
-		public int ID { get; internal set; }
-		public int parent { get; internal set; }
 		
 		public SpriterTimelineBone target { get; internal set; }
 		

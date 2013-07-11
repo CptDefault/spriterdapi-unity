@@ -2,6 +2,7 @@
 //  
 // Authors:
 //       Josh Montoute <josh@thinksquirrel.com>
+//       Justin Whitfort <cptdefault@gmail.com>
 //
 // 
 // Copyright (c) 2012 Thinksquirrel Software, LLC
@@ -30,24 +31,26 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 {
 	/// <summary>
 	/// Represents an object on the mainline.
+	/// 
+	/// Added inheritance so that it can be treated the same as timeline objects
 	/// </summary>
-	public sealed class SpriterMainlineObject : SpriterMainlineObjectBase
+	public class SpriterMainlineObject : SpriterMainlineObjectBase, ISpriterTimelineObject
 	{
-		public int ID { get; internal set; }
-		public int parent { get; internal set; }
 		public ObjectType objectType { get; internal set; }
 		public string objectTypeRaw { get; internal set; }
 		
+		public UsageType usage { get; internal set; }
+		public string usageRaw { get; internal set; }
+		public VariableType variableType { get; internal set; }
+		public string variableTypeRaw { get; internal set; }
+
+		#region ISpriterTimelineObject implementation
 		public SpriterAtlas targetAtlas { get; internal set; }
 		public SpriterFile targetFile { get; internal set; }
 		
 		public int atlas { get; internal set; }
 		public int folder { get; internal set; }
 		public int file { get; internal set; }
-		public UsageType usage { get; internal set; }
-		public string usageRaw { get; internal set; }
-		public BlendMode blendMode { get; internal set; }
-		public string blendModeRaw { get; internal set; }
 		public string name { get; internal set; }
 		public Vector2 position { get; internal set; }
 		public Vector2 pivot { get; internal set; }
@@ -56,22 +59,22 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		public int pixelHeight { get; internal set; }
 		public Vector2 scale { get; internal set; }
 		public Color color { get; internal set; }
-		public VariableType variableType { get; internal set; }
-		public string variableTypeRaw { get; internal set; }
+		public BlendMode blendMode { get; internal set; }
+		public string blendModeRaw { get; internal set; }
 		public object value { get; internal set; }
 		public object min { get; internal set; }
 		public object max { get; internal set; }
 		public int entityAnimation { get; internal set; }
 		public float entityT { get; internal set; }
-		public int zIndex { get; internal set; }
 		public float volume { get; internal set; }
 		public float panning { get; internal set; }
+		#endregion
 		
 		/// <summary>
-		/// Mainline object meta data
+		/// Timeline object meta data
 		/// </summary>
 		public List<SpriterMetaData> metaData { get; internal set; }
-		
+
 		public SpriterMainlineObject()
 		{
 			metaData = new List<SpriterMetaData>();

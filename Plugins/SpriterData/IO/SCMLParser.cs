@@ -2,6 +2,7 @@
 //  
 // Authors:
 //       Josh Montoute <josh@thinksquirrel.com>
+//       Justin Whitfort <cptdefault@gmail.com>
 //
 // 
 // Copyright (c) 2012 Thinksquirrel Software, LLC
@@ -23,15 +24,17 @@
 //
 // Spriter is (c) by BrashMonkey.
 //
-#if UNITY_EDITOR || SCML_RUNTIME
+
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using BrashMonkey.Spriter.Data.ObjectModel;
 using UnityEngine;
 
 namespace BrashMonkey.Spriter.Data.IO
 {
+#if UNITY_EDITOR || SCML_RUNTIME
 	// TODO: Some objects still need default constructors (-1 for references)
 	internal class SCMLParser
 	{	
@@ -58,41 +61,40 @@ namespace BrashMonkey.Spriter.Data.IO
 			m_Data.Reset();
 			
 			// Convert from SCML to object model
-			foreach(XmlElement element in scml.DocumentElement)
+
+			if(scml.DocumentElement == null)
+				throw new FileLoadException("Error loading XML document");
+			if(!scml.DocumentElement.Name.Equals("spriter_data"))
+				throw new FormatException("XML document does not contain root spriter_data element");
+
+			// version info
+			ReadVersionInfo(scml.DocumentElement);
+
+			foreach (XmlElement child in scml.DocumentElement)
 			{
-				// spriter_data
-				if (element.Name.Equals("spriter_data"))
-				{
-					// version info
-					ReadVersionInfo(element);
-					
-					foreach(XmlElement child in element)
-					{
-						// meta_data
-						if (child.Name.Equals("meta_data"))
-							ReadMetaData(child, m_Data.metaData);
+				// meta_data
+				if (child.Name.Equals("meta_data"))
+					ReadMetaData(child, m_Data.metaData);
 						
-						// folder
-						else if (child.Name.Equals("folder"))
-							ReadFolder(child);
+				// folder
+				else if (child.Name.Equals("folder"))
+					ReadFolder(child);
 						
-						// atlas
-						else if (child.Name.Equals("atlas"))
-							ReadAtlas(child);
+				// atlas
+				else if (child.Name.Equals("atlas"))
+					ReadAtlas(child);
 						
-						// entity
-						else if (child.Name.Equals("entity"))
-							ReadEntity(child);
+				// entity
+				else if (child.Name.Equals("entity"))
+					ReadEntity(child);
 						
-						// character_map
-						else if (child.Name.Equals("character_map"))
-							ReadCharacterMap(child);
+				// character_map
+				else if (child.Name.Equals("character_map"))
+					ReadCharacterMap(child);
 						
-						// document_info
-						else if (child.Name.Equals("document_info"))
-							ReadDocumentInfo(child);
-					}
-				}
+				// document_info
+				else if (child.Name.Equals("document_info"))
+					ReadDocumentInfo(child);
 			}
 			
 			// Find object references
@@ -391,6 +393,9 @@ namespace BrashMonkey.Spriter.Data.IO
 				else if (attribute.Name.Equals("name"))
 					m_Data.entity.name = attribute.Value;
 			}
+
+			if (m_Data.entity.name.Length == 0)
+				m_Data.entity.name = "noname";
 			
 			foreach(XmlElement child in element)
 			{
@@ -486,6 +491,21 @@ namespace BrashMonkey.Spriter.Data.IO
 						// object_ref
 						else if (child2.Name.Equals("object_ref"))
 							ReadMainlineObjectRef(child2, key);
+
+						
+						// Spriter doesn't always output files to the spec;
+						// check for bones here too
+						// bone
+						else if (child2.Name.Equals("bone"))
+						{
+							ReadBone(key.hierarchy, child2);
+						}
+
+						// bone_ref
+						else if (child2.Name.Equals("bone_ref"))
+						{
+							ReadBoneRef(key.hierarchy, child2);
+						}
 					}
 				}
 			}
@@ -498,95 +518,105 @@ namespace BrashMonkey.Spriter.Data.IO
 				// bone
 				if (child.Name.Equals("bone"))
 				{
-					SpriterMainlineBone bone = new SpriterMainlineBone();
-					hierarchy.bones.Add(bone);
-					
-					Vector2 position = Vector2.zero, scale = Vector2.zero;
-					Color color = Color.white;
-					
-					foreach(XmlAttribute attribute in child.Attributes)
-					{
-						// id
-						if (attribute.Name.Equals("id"))
-							bone.ID = int.Parse(attribute.Value);
-						
-						// parent
-						else if (attribute.Name.Equals("parent"))
-							bone.parent = int.Parse(attribute.Value);
-						
-						// x, y
-						else if (attribute.Name.Equals("x"))
-							position.x = float.Parse(attribute.Value);
-						else if (attribute.Name.Equals("y"))
-							position.y = float.Parse(attribute.Value);
-						
-						// angle
-						else if (attribute.Name.Equals("angle"))
-							bone.angle = float.Parse(attribute.Value);
-						
-						// scale_x, scale_y
-						else if (attribute.Name.Equals("scale_x"))
-							scale.x = float.Parse(attribute.Value);
-						else if (attribute.Name.Equals("scale_y"))
-							scale.y = float.Parse(attribute.Value);
-						
-						// r, g, b, a
-						else if (attribute.Name.Equals("r"))
-							color.r = float.Parse(attribute.Value);
-						else if (attribute.Name.Equals("g"))
-							color.g = float.Parse(attribute.Value);
-						else if (attribute.Name.Equals("b"))
-							color.b = float.Parse(attribute.Value);
-						else if (attribute.Name.Equals("a"))
-							color.a = float.Parse(attribute.Value);
-					}
-					
-					// Assign vector values
-					bone.position = position;
-					bone.color = color;
-					
-					foreach(XmlElement child2 in child)
-					{
-						// meta_data
-						if (child2.Name.Equals("meta_data"))
-							ReadMetaData(child2, bone.metaData);
-					}
+					ReadBone(hierarchy, child);
 				}
 				
 				// bone_ref
 				else if (child.Name.Equals("bone_ref"))
 				{
-					SpriterMainlineBoneRef boneRef = new SpriterMainlineBoneRef();
-					hierarchy.bones.Add(boneRef);
-					
-					foreach(XmlAttribute attribute in child.Attributes)
-					{
-						// id
-						if (attribute.Name.Equals("id"))
-							boneRef.ID = int.Parse(attribute.Value);
-						
-						// parent
-						else if (attribute.Name.Equals("parent"))
-							boneRef.parent = int.Parse(attribute.Value);
-						
-						// timeline
-						else if (attribute.Name.Equals("timeline"))
-							boneRef.timeline = int.Parse(attribute.Value);
-						
-						// key
-						else if (attribute.Name.Equals("key"))
-							boneRef.key = int.Parse(attribute.Value);
-					}
+					ReadBoneRef(hierarchy, child);
 				}
 			}
 		}
-		
+
+		private static void ReadBoneRef(SpriterHierarchy hierarchy, XmlElement child)
+		{
+			var boneRef = new SpriterMainlineBoneRef();
+			hierarchy.bones.Add(boneRef);
+
+			foreach (XmlAttribute attribute in child.Attributes)
+			{
+				// id
+				if (attribute.Name.Equals("id"))
+					boneRef.ID = int.Parse(attribute.Value);
+						
+					// parent
+				else if (attribute.Name.Equals("parent"))
+					boneRef.parent = int.Parse(attribute.Value);
+						
+					// timeline
+				else if (attribute.Name.Equals("timeline"))
+					boneRef.timeline = int.Parse(attribute.Value);
+						
+					// key
+				else if (attribute.Name.Equals("key"))
+					boneRef.key = int.Parse(attribute.Value);
+			}
+		}
+
+		private void ReadBone(SpriterHierarchy hierarchy, XmlElement child)
+		{
+			var bone = new SpriterMainlineBone();
+			hierarchy.bones.Add(bone);
+
+			Vector2 position = Vector2.zero, scale = Vector2.zero;
+			Color color = Color.white;
+
+			foreach (XmlAttribute attribute in child.Attributes)
+			{
+				// id
+				if (attribute.Name.Equals("id"))
+					bone.ID = int.Parse(attribute.Value);
+						
+					// parent
+				else if (attribute.Name.Equals("parent"))
+					bone.parent = int.Parse(attribute.Value);
+						
+					// x, y
+				else if (attribute.Name.Equals("x"))
+					position.x = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("y"))
+					position.y = float.Parse(attribute.Value);
+						
+					// angle
+				else if (attribute.Name.Equals("angle"))
+					bone.angle = float.Parse(attribute.Value);
+						
+					// scale_x, scale_y
+				else if (attribute.Name.Equals("scale_x"))
+					scale.x = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("scale_y"))
+					scale.y = float.Parse(attribute.Value);
+						
+					// r, g, b, a
+				else if (attribute.Name.Equals("r"))
+					color.r = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("g"))
+					color.g = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("b"))
+					color.b = float.Parse(attribute.Value);
+				else if (attribute.Name.Equals("a"))
+					color.a = float.Parse(attribute.Value);
+			}
+
+			// Assign vector values
+			bone.position = position;
+			bone.color = color;
+
+			foreach (XmlElement child2 in child)
+			{
+				// meta_data
+				if (child2.Name.Equals("meta_data"))
+					ReadMetaData(child2, bone.metaData);
+			}
+		}
+
 		void ReadMainlineObject(XmlElement element, SpriterMainlineKey key)
 		{
 			SpriterMainlineObject obj = new SpriterMainlineObject();
 			key.objects.Add(obj);
 			
-			Vector2 position = Vector2.zero, pivot = Vector2.zero, scale = Vector2.zero;
+			Vector2 position = Vector2.zero, pivot = new Vector2(0, 1), scale = Vector2.one;
 			Color color = Color.white;
 			
 			foreach(XmlAttribute attribute in element.Attributes)
@@ -700,7 +730,7 @@ namespace BrashMonkey.Spriter.Data.IO
 					obj.entityT = float.Parse(attribute.Value);
 				
 				// z_index
-				else if (attribute.Value.Equals("z_index"))
+				else if (attribute.Name.Equals("z_index"))
 					obj.zIndex = int.Parse(attribute.Value);
 				
 				// volume
@@ -733,7 +763,7 @@ namespace BrashMonkey.Spriter.Data.IO
 		
 		void ReadMainlineObjectRef(XmlElement element, SpriterMainlineKey key)
 		{
-			SpriterMainlineObjectRef obj = new SpriterMainlineObjectRef();
+			var obj = new SpriterMainlineObjectRef();
 			key.objects.Add(obj);
 		
 			foreach(XmlAttribute attribute in element.Attributes)
@@ -755,7 +785,7 @@ namespace BrashMonkey.Spriter.Data.IO
 					obj.key = int.Parse(attribute.Value);
 		
 				// z_index
-				else if (attribute.Value.Equals("z_index"))
+				else if (attribute.Name.Equals("z_index"))
 					obj.zIndex = int.Parse(attribute.Value);
 			}
 		}
@@ -865,7 +895,7 @@ namespace BrashMonkey.Spriter.Data.IO
 			SpriterTimelineBone bone = new SpriterTimelineBone();
 			key.objects.Add(bone);
 			
-			Vector2 position = Vector2.zero, scale = Vector2.zero;
+			Vector2 position = Vector2.zero, scale = Vector2.one;
 			Color color = Color.white;
 			
 			foreach(XmlAttribute attribute in element.Attributes)
@@ -915,7 +945,7 @@ namespace BrashMonkey.Spriter.Data.IO
 			SpriterTimelineObject obj = new SpriterTimelineObject();
 			key.objects.Add(obj);
 			
-			Vector2 position = Vector2.zero, pivot = Vector2.zero, scale = Vector2.zero;
+			Vector2 position = Vector2.zero, pivot = new Vector2(0,1), scale = Vector2.one;
 			Color color = Color.white;
 		
 			foreach(XmlAttribute attribute in element.Attributes)
@@ -1160,5 +1190,5 @@ namespace BrashMonkey.Spriter.Data.IO
 		// TODO: Save methods
 		#endregion
 	}
-}
 #endif
+}

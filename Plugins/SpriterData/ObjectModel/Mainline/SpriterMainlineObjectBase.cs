@@ -2,6 +2,7 @@
 //  
 // Authors:
 //       Josh Montoute <josh@thinksquirrel.com>
+//       Justin Whitfort <cptdefault@gmail.com>
 //
 // 
 // Copyright (c) 2012 Thinksquirrel Software, LLC
@@ -32,6 +33,21 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 	/// </summary>
 	public abstract class SpriterMainlineObjectBase
 	{
-		// Currently no data
+		/// <summary>
+		/// The object ID, unique to this object reference within its key
+		/// </summary>
+		public int ID { get; internal set; }
+
+		public int parent { get; internal set; }
+
+		/// <summary>
+		/// Order this object should be drawn
+		/// </summary>
+		public int zIndex { get; internal set; }
+
+		protected SpriterMainlineObjectBase()
+		{
+			parent = -1;
+		}
 	}
 }

@@ -1,9 +1,10 @@
+﻿// NGUI import/export plugin
+// SpriterDataUnity.cs
 // Spriter Data API - Unity
 //  
 // Authors:
 //       Josh Montoute <josh@thinksquirrel.com>
 //       Justin Whitfort <cptdefault@gmail.com>
-//
 // 
 // Copyright (c) 2012 Thinksquirrel Software, LLC
 //
@@ -22,33 +23,43 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Spriter is (c) by BrashMonkey.
+// NGUI is (c) by Tasharen Entertainment. Spriter is (c) by BrashMonkey.
 //
+
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace BrashMonkey.Spriter.Data.ObjectModel
 {
-	/// <summary>
-	/// Represents an object reference on the mainline.
-	/// </summary>
-	/// TODO: Comments
-	public sealed class SpriterMainlineObjectRef : SpriterMainlineObjectBase
+	public interface ISpriterTimelineObject : ISpriterTimelineBone
 	{
-		
-		
+		SpriterAtlas targetAtlas { get;  }
+		SpriterFile targetFile { get; }
+
+		int atlas { get; }
+		int folder { get; }
+		int file { get; }
+		string name { get; }
+		//Vector2 position { get; }
+		Vector2 pivot { get; }
+		//float angle { get; }
+		int pixelWidth { get; }
+		int pixelHeight { get; }
+		//Vector2 scale { get; }
+		//Color color { get; }
+		BlendMode blendMode { get; }
+		string blendModeRaw { get; }
+		object value { get; }
+		object min { get; }
+		object max { get; }
+		int entityAnimation { get; }
+		float entityT { get; }
+		float volume { get; }
+		float panning { get; }
+
 		/// <summary>
-		/// The timeline object referenced
+		/// Timeline object meta data
 		/// </summary>
-		public SpriterTimelineObject target { get; internal set; }
-		
-		/// <summary>
-		/// Corresponds to the ID of the timeline referenced
-		/// </summary>
-		public int timeline { get; internal set; }
-		/// <summary>
-		/// Corresponds to the ID of the key within the timeline referenced
-		/// </summary>
-		public int key { get; internal set; }
-		
+		List<SpriterMetaData> metaData { get; }
 	}
 }

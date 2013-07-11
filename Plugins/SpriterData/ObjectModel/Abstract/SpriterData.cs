@@ -138,6 +138,8 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		/// </summary>
 		public DocumentInformation documentInfo { get; internal set; }
 		
+		public string rootLocation { get; internal set; }
+		
 #if UNITY_EDITOR || SCML_RUNTIME
 		SCMLParser m_Parser;
 #endif	
@@ -164,6 +166,8 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 		{
 #if UNITY_EDITOR || SCML_RUNTIME			
 			m_Parser.LoadSCML(path);
+			
+			rootLocation = System.IO.Path.GetDirectoryName(path).Replace(UnityEngine.Application.dataPath, "Assets");
 #endif
 			ToImplementation();
 		}
@@ -200,6 +204,8 @@ namespace BrashMonkey.Spriter.Data.ObjectModel
 			
 			this.files.Clear();
 			
+
+
 			this.metaData.Clear();
 			
 			this.versionInfo.generator = SpriterDataVersionInfo.generator;
