@@ -251,7 +251,7 @@ namespace BrashMonkey.Spriter.DataPlugins
 					obj1 = ((SpriterMainlineBoneRef)obj).target;
 				if (obj1 == null)
 				{
-					Debug.LogException(new Exception("Unknown type"));
+					Debug.LogError("Unknown type");
 					continue;
 				}
 
@@ -267,7 +267,7 @@ namespace BrashMonkey.Spriter.DataPlugins
 					obj1 = ((SpriterMainlineObjectRef)obj).target;
 				if (obj1 == null)
 				{
-					Debug.LogException(new Exception("Unknown type"));
+					Debug.LogError("Unknown type");
 					continue;
 				}
 
@@ -407,9 +407,17 @@ namespace BrashMonkey.Spriter.DataPlugins
 
 				float w = sprObj.targetFile.width - pW;
 				float h = sprObj.targetFile.height - pH;
+				
+				Vector2 pivot = sprObj.pivot;
+				//check if the pivot is the default
+				if ((pivot - new Vector2(0, 1)).sqrMagnitude < 0.001f)
+				{
+					pivot = sprObj.targetFile.pivot;
+				}
+
 				colorHelper.transform.localRotation = Quaternion.identity;
-				colorHelper.transform.localPosition = new Vector2(-sprObj.pivot.x*sprObj.targetFile.width,
-				                                                  (1 - sprObj.pivot.y)*sprObj.targetFile.height)
+				colorHelper.transform.localPosition = new Vector2(-pivot.x*sprObj.targetFile.width,
+				                                                  (1 - pivot.y)*sprObj.targetFile.height)
 				                                      + new Vector2(paddingTL.x, -paddingTL.y);
 
 				colorHelper.transform.localScale = new Vector3(w, h, 1);
@@ -800,7 +808,7 @@ namespace BrashMonkey.Spriter.DataPlugins
 		}
 		#endregion
 		
-		#region ISpriterData implementation
+		#region SpriterData implementation
 
 		protected override void FromImplementation()
 		{

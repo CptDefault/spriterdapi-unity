@@ -242,7 +242,7 @@ namespace BrashMonkey.Spriter.Data.IO
 		{
 			int folderID = -1;
 			string folderName = string.Empty;
-			Vector2 pivot = Vector2.zero;
+			
 		
 			foreach(XmlAttribute attribute in element.Attributes)
 			{	
@@ -259,6 +259,8 @@ namespace BrashMonkey.Spriter.Data.IO
 			{
 				if (!child.Name.Equals("file"))
 					continue;
+
+				var pivot = new Vector2(0, 1);
 				
 				SpriterFile file = new SpriterFile();
 				m_Data.files.Add(file);
